@@ -186,33 +186,141 @@
 
 ## Storage Management
 1. File-System Management
+    * file
+        * 연관된 정보의 모임, 보통 데이터(숫자, 글자, binary)와 프로그램을 표현함
+        * disk 등에 저장됨
+        * user의 접근 권한 관리 (read, write, append 등)
+        * directory를 통해 사용 용이화
+    * OS의 file 관리
+        * 파일 생성/삭제
+        * directory 생성/삭제
+        * 파일과 directory 조작을 위한 기본 기능 지원
+        * secondary storage에 mapping
+        * 안정적인 storage에 백업
 1. Mass-Storage Management
+    * Main Memory의 휘발성과 적은 용량으로 백업을 위해 secondary storage를 사용한다.
+    * OS의 disk management
+        * 빈 공간 관리
+        * 저장공간 할당
+        * disk scheduling
+    * 컴퓨터의 전체 속도는 disk의 하위 시스템과 그의 알고리즘에 달려있다.
+    * tertiary storage: Magnetic tape, CD, DVD 등
+        * secondary storage에 용량이 부족할 경우 tertiary storage에 저장
+        * WORM (Write once, Read many times), RW(Read Write) 형식
+        * mount, unmount를 통해 OS가 관리
 1. Caching
+    * Main Memory에서 사용할 것들을 Cache에 저장해 둠
+    * Cache 용량이 매우 한정되어있기에 cache 관리가 중요
+    * Register > Cache > Main Memory > SSD > MD 순으로 빠름
+    * Cache Coherency: 같은 데이터가 여러 곳에 있을 수 있는데, Multiprocessor 환경에서는 한 값이 바뀌면 다른 곳에도 적용 되어야 한다.
 1. I/O Systems
+    * OS는 특정 하드웨어의 특수성을 유저로 부터 숨겨야 하는 목적이 있음
+    * I/O Subsystem
+        * buffering, caching, spooling을 통한 memory 관리
+        * device-driver 인터페이스
+        * 특정 하드웨어 디바이스의 driver
 
 ## Protection and Security
-
+* Computer system은 여러 user를 가지고 동시에 여러 process를 실행시켜야 하며, 이 때문에 data에 대한 access는 규제되어야 한다.
+* Protection
+    * process 혹은 user의 resource 접근 통제 방법
+* Security
+    * 내외부의 공격으로부터 system 보호
+* 사용자 구분
+    * user IDs
+    * Security ID (SID): Windows
+* 사용자 그룹을 통한 공통 권한 부여
+    * group IDs 부여
+* Effective UID
+    * 특수한 파일 사용을 위해 잠시 권한 상승이 필요할 때 해당 파일의 소유자 uid 를 통해 접근
 ## Kernel Data Structures
 1. Lists, Stacks, and Queues
+    * Array: 다양한 size의 data 관리 및 지속적 삭제시 불리
+    * List: 특정 순서대로 data 접근, 삽입/삭제에 유리, item 검색에 불리
+    * Stack: LIFO 구조, push/pop으로 데이터 관리
+    * Queue: FIFO 구조
 1. Trees
+    * data를 계층화하여 나타내는 자료구조
+    * general tree: 수많은 자식 가짐
+    * binary tree: 자식이 좌, 우 하나씩
+    * binary search tree: left child보다 right child가 더 커야함, worst의 경우 O(n)
+    * balanced binary search tree: bst의 worst case 해결, O(lg n)
 1. Hash Functions and Maps
+    * Hash Function: data를 받아 특정 연산 후 numeric 값으로 반환하는 함수, 여기서 나온 값을 index로 사용
+    * Hash collision: 두 개의 서로 다른 input에서 같은 output이 나오는 경우
+    * hash map: key-value 쌍을 hash function을 이용해 결합
 1. Bitmaps
+    * n binary digits로 이루어진 string
+    * disk block을 가리키기 좋음
+    
 
 ## Computing Environments
 1. Traditional Computing
+    * Web 기술과 WAN(Wide Area Network)으로 전통적인 computing의 영역이 확대되고 있다.
+    * 각 회사는 자신의 내부 서버에 접근할 수 있는 Web인 Portal을 구축하고 있다.
+    * Network Computer(thin clients)는 기존의 workstation으로 쓸 수 있다.
+    * Mobile 컴퓨터는 회사 정보를 이용하기 위해 PC와 동기화 할 수 있다.
+    * 무선 네트워크로 연결 가능하다.
+    * 보안 위반으로부터 네트워크를 보호하기 위해 firewalls 사용
 1. Mobile Computing
+    * Smartphone 혹은 tablet computer 의미
+    * 가볍고 휴대성이 좋다.
+    * IOS와 Android 두 개의 OS 존재
 1. Distributed Systems
+    * 물리적으로 떨어져있는 computer system의 집합
+    * 높은 연산 능력, 저장 능력, 안정성, 높은 기능성
+    * Network를 통해 소통, 보통 TCP/IP protocol 사용
+    * LAN (Local Area Network): 컴퓨터 끼리의 연결
+    * WAN: 빌딩, 도시, 나라 등을 연결
+    * Network operating system: network를 통한 파일 공유와 같은 기능을 제공하는 OS
 1. Client-Server Computing
+    * Client의 요청을 Server에서 처리
+    * compute-server system: client의 요청을 받아 처리해 결과를 전달해 줌
+    * file-server system: client가 file을 생성/변경/읽기/삭제 가능 (CRUD)
 1. Peer-to-Peer Computing
+    * Client와 Server가 따로 구분되지 않음
+    * 여러 node들이 network에 가입되어 있음
+    * network 가입 시 중앙화된 lookup 서비스 혹은 broadcasting을 통해 원하는 서비스를 제공하는 node를 찾을 수 있음
+    * Skype는 P2P computing의 대표적 예시, voice over IP (VoIP) 기술을 통해 client 끼리 통신 가능
 1. Virtualization
+    * OS 내에서 application의 개념으로 또다른 OS를 허용하는 기술
+    * Emulation을 포함하는 개념
+    * Emulation: source CPU type과 target CPU type이 다를 때 사용
+        * Interpretation: native code가 아닌 중간 형태로 바꿔주는 것, emulation 중 하나
 1. Cloud Computing
+    * network를 통해 연산능력, 저장공간, 어플리케이션 서비스 등을 제공하는 것
+    * Public cloud: Internet을 통해 돈을 내고 이용할 수 있는 cloud
+    * Private cloud: 회사 자신이 이용하기 위해 운영하는 cloud
+    * Hybrid cloud: public/private cloud가 섞인 cloud
+    * SaaS: Internet에서 이용할 수 있는 application (word processor, spreadsheet 등)
+    * PaaS: Internet을 통해 application을 만들 수 있는 소프트웨어 하위 시스템 (database 등)
+    * IaaS: Internet을 통해 사용 가능한 server 혹은 storage (storage 등)
 1. Real-Time Embedded Systems
+    * 엔진과 로봇부터 DVD와 전자레인지까지 많은 곳에서 찾을 수 있음
+    * 특정 기능을 수행함
+    * 기본적인 기능만 실행하기에, OS는 한정된 기능만 제공
+    * Real-time system: 엄격한 시간 요구사항이 요구되는 경우 사용
+    * Real-time Embedded systems: sensor 등을 의미
 
 ## Open-Source Operating Systems
+* Source code로 제공되는 OS
+* Closed source와 반대
 1. History
+    * Binary code 형태의 OS 제공의 이점
+        * 경쟁사로부터의 도용 보호
+        * program들의 Copy protection 혹은 DRM 관리 시 유리
+    * Richard Stallman이 1983년 GNU project 시작
+        * Free Software Foundation(FSF) 설립
+        * GNU General Public License (GPL)
+        * UNIX 호환 도구 개발
 1. Linux
+    * 핀란드의 Linus Torvalds란 학생이 1991년 GNU compiler를 통해 UNIX-like kernel 개발
+    * 수많은 분기/custom build 등을 야기했다.
+    * 주요 분기는 RedHat, SUSE, Fedora, Debian, Slackware, Ubuntu 가 있다.
 1. BSD UNIX
+    * UC Berkley가 개발해 AT&T의 UNIX로 1978년 시작, 추후 open source로 1994년 등장 
+    * Linux 보다 깊은 역사를 지님
+    * FreeBSD, NetBSD, OpenBSD, DragonflyBSD 등 존재
+    * Mac OS X의 핵심 kernel인 Darwin의 기반
 1. Solaris
-1. Open-Source Systems as Learning Tools
-
-## Summary
+    * Sun Microsystems에서 개발한 상업 용도의 UNIX 기반의 OS
