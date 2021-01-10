@@ -162,9 +162,18 @@
 * 평가 기준
     * CPU utilization maximize + maximum response time 1 sec
     * throuput maximize + turnaround time이 평균적으로 execution time에 선형 비례
+* Analytic evaluation
+    * 주어진 algorithm과 system workload로 식이나 점수를 생산해 성능 평가
 1. Deterministic Modeling
+    * Analytic evaluation의 일종
+    * workload를 미리 가정하여 성능 평가
 1. Queueing Models
+    * process가 도는 방식이 날이 갈수록 달라져 deterministic modeling을 적용하기 힘들어짐
+    * CPU 및 I/O burst의 분배로 결정할 수 있음
 1. Simulations
+    * 직접 simulation 해보면 더 정확
+    * trace tapes를 이용해 이벤트별 기록을 남겨 더 정확한 판단 가능
+    * expensive, 시간 오래걸림
 1. Implementation
-
+    * 실제 OS에 적용해서 동작하는 것을 보는 것이 가장 정확
 ## Summary
