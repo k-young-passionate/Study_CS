@@ -154,7 +154,21 @@ do {
         * asymmetric 방법: 홀수 철학자는 왼쪽-오른쪽, 짝수 철학자는 오른쪽-왼쪽 순으로 집기
 
 ## Monitors
+* semaphore가 쓰기 편리하지만, 잘못 쓰면 찾기 힘든 timing error 등이 발생
+* 이런 오류를 막기 위해 high-level synchronization construct인 monitor type 사용
+
 1. Monitors Usage
+    * Abstract Data Type (ADT): function의 세세한 적용과 독립적인 data를 function들의 집합으로 감쌈
+    * Monitor type은 ADT로 programmer가 정의한 mutex 관련 operation들을 포함
+    * Monitor 안에서는 한 번에 한 process만 active 하게 허용
+    * 좀 더 modeling하기 위해서 condition이라는 construct 사용
+        ```c++
+        condition x;
+        x.wait(); // x.signal() 호출 전 까지 대기
+        ```
+        * signal 보냈을 때의 행동 (P가 signal() 호출 후 Q 실행)
+            1. Signal and wait: P가 Q가 Monitor를 떠나기를 기다리거나 다른 condtion을 기다림
+            1. Signal and continue: Q가 P가 Monitor를 떠나기를 기다리거나 다른 condition 기다림
 1. Dining-Philosophers Solution Using Monitors
 1. Implementing a Monitor Using Semaphores
 1. Resuming Processes within a Monitor
