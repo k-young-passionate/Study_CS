@@ -150,13 +150,85 @@
         * 어떤 process의 몇 번째 page인지에 대한 정보
     
 1. Hardware Support
+    * OS 별 page table 저장법
+        * 각 process마다 Page table을 할당하고, PCB에 page table 위치 저장
+        * 적은 수의 page table을 제공하여 context switch overhead를 줄임
+    * Hardware Implementation
+        * Simple: 지정된 register set으로 page table 적용, 빠른 접근이 가능하나 page table이 작을 경우만 가능
+        * Simple method's Solution: Main memory에 저장하고 Page-Table Base Register(PTBR)가 가리키게 함, page table 교체 시 주소만 update하면 되기에 context switch overhead가 줄어드나 main memory에 접근하는 시간이 오래 걸림
+        * Current Standard: Translation Look-aside Buffer(TLB)라는 빠르고 작은 hardware cache에 key-value 쌍으로 저장 
+    * TLB
+        
+        ![TLB](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Translation_Lookaside_Buffer.png/373px-Translation_Lookaside_Buffer.png)
+        * page-table의 일부만 가짐
+        * logical address가 CPU에 의해 계산되면, page number를 TLB에서 찾아 frame number를 얻고, TLB miss가 날 경우 memory에서 가져와서 offset과 physical address 연산
+        * 일부 entry는 wired down함 (교체되지 않도록 지정)
+        * 일부 TLB는 각 entry마다 address-sapce identifiers(ASIDs)를 보관
+        * ASIDs: 각 process를 구분하여 address-space protection, ASIDs match 실패 시, TLB miss로 처리
+
+    * 성능
+        * hit ratio: TLB에서 발견되는 비율
+        * effective memory-access time = TLB hit ratio * TLB access time + TLB miss ratio * Memory access time
 1. Protection
+    * 보통 bit로 관리하고 page table에 포함
+    * 권한 관련 bit
+        * 각 frame의 protection bits에 의해 protected
+        * read-only / read-write 결정
+        * bit를 추가해 execute-only 등도 설정 가능
+        * 위반 시 hardware trap 혹은 memory-protection violation 발생
+    * valid-invalid bit
+        * page 접근 권한 통제
+        * process가 접근할 수 있는 logical address인지를 확인
+    * PTLR (page-table length register)
+        * 일부 system에서 제공
+        * page table의 size를 알려줌
+        * process가 접근하려는 주소가 유효한지 확인
 1. Shared Pages
+    * paging의 장점으로 common code를 공유할 수 있는 가능성이 있음
+    * reenterant code (pure code) 일 경우 여러명이 사용 가능
+        * reenterant code: non self modifying code, 실행하는 동안 바뀌지 않음
 
 ## Structure of the Page Table
 1. Hierarchical Paging
+    * 현대 system은 매우 큰 logical address 사용 => page table도 커짐
+    * page table을 효율적으로 관리하기 위해 two-level paging 사용
+        * page table 자체도 paging 하기
+        * outer page table에서 inward로 들어오는 방식으로 forward-mapped page table이라고 하기도 함
+        ![two-level page table](https://i.stack.imgur.com/ML9OY.png)
+    * 이전에 VAX minicomputer에서 section과 page, offset을 나눈 logical address 구조를 사용
 1. Hashed Page Tables
+    * 32 bit보다 큰 주소를 다루기 위해 사용
+    * 각 entry는 hash collision을 대비하기 위해 linked list로 구성
+    * 각 element는 virtual page number, 대응되는 page frame의 값, 다음 element를 기라키는 pointer
+    * 동작 방식
+        1. virtual page number가 hash table에 hash되어 들어감
+        1. linked list를 탐색하며 match가 있으면 page frame 사용해 physical address로 변환, miss일 경우 linked list의 남은 entry 탐색
+        ![hashed page table](https://i.stack.imgur.com/Fbv32.png)
+    * 변형으로 clustered page table이 있음
+        * 하나의 entry가 여러 page 가리킴
+        * noncontiguous하거나 scattered된 memory를 참조하는 sparse address 공간에 유용
+
 1. Inverted Page Tables
+    * 일반적인 page table
+        * 하나의 entry에 page를 대응시키고, process는 page table에서 virtual address를 통해 실제 page를 찾아감
+        * 너무나 많은 entry로 인해 공간을 많이 차지
+    * Inverted Page Table
+        * 하나의 entry에 하나의 real page 주소 참조
+        * 각 entry는 process 정보와 실제 주소에 저장된 virtual address로 구성
+        * 하나의 page table만 system에 존재하고, 각 physical memory의 page마다 하나의 entry만을 갖게 됨
+        * Entry는 <process-id, pagge-number, offset> 으로 구성
+        * page table에서 match를 찾기위해 탐색
+        * i 번째에서 match를 찾으면 physical address는 <i, offset>인 것임
+        ![Inverted page table](https://lh3.googleusercontent.com/proxy/uvYnb_4i6EnMW35UYUePZ9vQrvZY9rXPhUbLum3dCoD55_dSQ4uPe90BHnh5hsZXwFFoxVMWCFmQvu_LoAnQQGkSRuLs_6tHyEoakqSW6svV-PBXLt2majGjIIrO3REUcoStQKjd7B0)
+    * 특장
+        * memory를 획기적으로 줄여줌
+        * search time 증가
+
+1. Oracle SPARC Solaris
+    * 두 개의 hash table 운영: 하나는 kernel, 하나는 user용
+    * 각각의 virtual memory는 physical memory에 map 됨
+    * 각각의 entry는 contiguous 함
+    * hash table을 통해 각 address가 탐색되면 느려질 수 있기 때문에 Translation table entry(TTE)를 가진 TLB를 적용
 
 ## Example: Intel 32 and 64-bit Architectures
 1. IA-32 Architecture
