@@ -79,18 +79,84 @@
     
 ## Access Methods
 1. Sequential Access
-1. Direct Access
+    * file의 information을 순서대로 접근
+    * 단순하고 꽤나 잘 쓰임 - editors, compilers의 접근 방법
+    * read_next(), write_next()
+    * 처음으로 이동할 수 있고, 일부 system에서는 앞뒤로의 이동 지원
+    ![sequential access file](https://www.cs.csustan.edu/~john/Classes/CS3750/Notes/Chap13/13_04seqAccess.jpg))
+
+1. Direct Access (Relative Access)
+    * file을 block/records의 번호가 매겨진 순서로 여김
+    * 접근할 block의 순서를 정할 수 있음
+    * read(n), write(n)
+    * 여기서 사용하는 block number는 relative block number
+        * file의 시작점에서 번호 시작
+
 1. Other Access Methods
+    * direct access 기반으로 접근
+    * index를 만들어 그 기반으로 접근
+    * file이 크면 index file도 커지기에, index에 대한 index도 마련
 
 ## Directory and Disk Structure
-1. Storage Structure
-1. Directory Overview
-1. Single-Level Directory
-1. Two-Level Directory
-1. Tree-Structured Directories
-1. Acyclic-Graph Directories
-1. General Graph Directory
+* Partitioning: file system 각각의 size를 제한하여 여러 file system을 하나의 device에 사용 가능하게 하는 것
+* Volume: file system이 포함된 개체
+* Device directory / volume table of contents: file system 안에 있는 files 에 대한 정보
 
+1. Storage Structure
+    * Solaris의 File system 종류
+        * tmpfs - temporary file system: main memory에 생김
+        * objfs - virtual file system: debugger가 kernel symbol에 접근할 수 있게 해줌
+        * ctfs - virtual file system: process의 시작과 실행을 관장하는 접근 주소 보관
+        * lofs - loop back file system: 다른 곳에서도 file system을 접근할 수 있게 해줌
+        * procfs - virtual file system: 모든 process의 정보 보관
+        * ufs, zfs - general purpose file systems
+
+1. Directory Overview
+    * directory: file 이름을 directory entry로 변환해주는 symbol table로 볼 수 있음
+    * operation
+        * search a file
+        * create a file
+        * delete a file
+        * list a directory
+        * rename a file
+        * traverse the file system
+
+1. Single-Level Directory
+    * 모든 file이 하나의 directory에 담겨 있음
+    * 한계
+        * 파일이 많을 경우 모두 다른 이름을 유지해야 함
+        * user 가 여럿일 경우 모든 파일 이름을 기억하기 쉽지 않음(?)
+
+1. Two-Level Directory
+    * User File Directory (UFD): 각 user가 가진 directory, 각 user만을 위한 파일 존재
+    * Master File Directory (MFD): user 이름 혹은 account number로 기록, 각 UFD의 진입 point
+    * 한계
+        * user 끼리 file 공유가 어려움
+
+1. Tree-Structured Directories
+    * root directory를 가지고, 이 아래 각 file이 unique한 path 이름을 가짐
+    * 각 directory는 file 혹은 subdirectory를 가짐
+    * 각 process는 current directory를 가짐
+    * path 종류
+        * absolute path name: root부터 명시
+        * relative path name: current directory부터 명시
+
+1. Acyclic-Graph Directories
+    * tree structure에서는 directory 및 file이 공유되지 않았지만, 여기서는 cycle 없이 가능
+    * 공유된 file은 copied 된 것이 아닌 shared 된 것
+    * file sharing 구현
+        * link: file을 가리키는 pointer
+        * duplication
+    * 한계
+        * 하나의 file이 여러 absolute path name 가짐
+        * 삭제 시, dangling reference 발생 가능 => symbolic link를 이용해서 해결 혹은 모든 reference가 사라질 때까지 보존 (hardlink 기준)
+
+1. General Graph Directory
+    * Acyclic-Graph Directory는 acyclic 보장이 힘듬
+    * 한계
+        * traverse algorithm이 어려움 => traverse 횟수 제한으로 극복 가능
+        * 파일 지울 때 self referencing으로 delete 안 될 수 있음 => garbage collection을 통해 지우고 reallocate 해줌
+    * Garbage Collection: file system 전체 탐색하며 marking 후, unmarked 된 곳을 free함
 ## File-System Mounting
 
 ## File Sharing
