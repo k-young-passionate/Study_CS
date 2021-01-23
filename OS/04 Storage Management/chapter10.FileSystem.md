@@ -157,22 +157,75 @@
         * traverse algorithm이 어려움 => traverse 횟수 제한으로 극복 가능
         * 파일 지울 때 self referencing으로 delete 안 될 수 있음 => garbage collection을 통해 지우고 reallocate 해줌
     * Garbage Collection: file system 전체 탐색하며 marking 후, unmarked 된 곳을 free함
-    
+
 ## File-System Mounting
+* file처럼 file system도 process에게 사용되기 전에 mounted 되어야 함
+* device의 name과 mount point(mount 될 위치)를 받으면 mount 해줌
 
 ## File Sharing
 1. Multiple Users
+    * file/directory의 owner(user)와 group 속성 부여
+        * user: file의 속성 및 권한을 바꿀 수 있는 사람
+        * group: file의 접근 권한을 공유하는 user들의 subset
 1. Remote File Systems
     1. The Client-Server Model
+        * network name 혹은 IP 등으로 user 식별 가능하나 spoofed 될 수 있음
+        * encrypted key를 이용한 보안 인증이 있지만, 호환성이나 key 교환 보안 문제 등의 어려움 존재
+        * DFS (Distributed File System) protocol: remote file system이 mounted 되었을 때, network를 통해 file operation을 전달
     1. Distributed Information Systems
-    1. Failure Modes
-1. Consistency Semantics
-    1. UNIX Semantics
-    1. Session Semantics
-    1. Immutable-Shared-Files Semantics
+        * Distributed Naming Services라고 불리기도 함
+        * remote computing에 필요한 정보에 통일된 접근을 제공
+        * Domain Naming Systems(DNS)를 통해 scalable하게 운영될 수 있고, 이전에는 ftp 혹은 email로 운영되었음
+        * 여러 방식
+            * NIS(Network Information System): 모든 user name, host name, printer information 등의 정보를 중앙화한 주소록(yellow page), 여러 산업체에서 도입
+            * CIFS(Common Internet File System): user name과 password를 통해 login을 하게 하여 신원 확인
+            * LDAP(Lightweight Directory-Access Protocol): 산업체에서 도입한 안전한 분산 naming 방식, 직원들의 정보 저장
 
+    1. Failure Modes
+        * Local File System 문제 원인: disk 문제, metadata 변형, disk controller 문제, cable 문제, host-adapter 문제 등
+        * Remote File System 문제 원인: Local File System + network 등의 결합으로 훨씬 많은 원인
+        * recovery 적용을 위해 client와 server 양쪽에 state information을 유지해야 함
+            * failure 벌어졌을 때, opened 된 file 등에 대한 정보를 유지하면 복구 가능
+        * NFS protocol: stateless 방식 사용하여 read/write 등의 명령에 대해 remote file system이 mounted 된 상황이 아니라면 일어나지 않은 일로 처리
+
+1. Consistency Semantics
+    * Consistency Semantics는 file sharing을 지원하는 file system을 평가하는 기준
+    1. UNIX Semantics
+        * file의 수정이 file을 연 다른 user에게 바로 보여짐
+        * 원본에 관계없이 모든 access를 interleave(동시 접근)하는 단일 image 보유
+    1. Session Semantics
+        * file의 수정이 file을 연 다른 user에게 바로 보여지지 않음
+        * file이 닫히면 이후 열린 파일에 수정 내역이 반영되어서 보임, 열려있는 파일에는 반영되어지지 않음
+    1. Immutable-Shared-Files Semantics
+        * 수정될 수 없음
 ## Protection
 1. Types of Access
+    * 종류
+        * Read
+        * Write
+        * Execute
+        * Append
+        * Delete
+        * List
+    * 각각의 access에 대해 통제
+
 1. Access Control
+    * ACL (Access control list)를 이용해 user의 name과 각 user에게 부여된 access 종류 지정
+    * 적용에 어려운 점
+        * user list를 모르면 일일이 적용하는 것은 귀찮은 일
+        * directory entry의 크기가 가변적이어서 관리 복잡
+    * 적용을 위한 분류
+        * Owner: file 생성자
+        * Group: 같은 접근 권한을 가진 user들의 set
+        * Universe: 나머지 user
+    * 적용
+        * UNIX에서는 각 분류당 3bit씩 Read/Write/Execute 권한 부여 (owner/file's group/other users)
+
+1. Other Protection Approaches
+    * Password 인증으로 파일 접근하는 방식
+        * 단점: 기억하기 어려움, 다 통일하면 보안에 취약
+    * directory의 경우, file과 다른 보안 필요
+        * file list 접근 제어
+        * path name에 대한 접근 제어
 
 ## Summary
