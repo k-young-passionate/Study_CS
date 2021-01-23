@@ -157,6 +157,7 @@
         * traverse algorithm이 어려움 => traverse 횟수 제한으로 극복 가능
         * 파일 지울 때 self referencing으로 delete 안 될 수 있음 => garbage collection을 통해 지우고 reallocate 해줌
     * Garbage Collection: file system 전체 탐색하며 marking 후, unmarked 된 곳을 free함
+    
 ## File-System Mounting
 
 ## File Sharing
