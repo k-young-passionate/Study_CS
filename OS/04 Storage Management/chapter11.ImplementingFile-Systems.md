@@ -208,19 +208,30 @@
 
 ## Free-Space Management
 ### 1. Bit Vector
-
+* 각 disk block들을 bit map(bit vector)로 표현한 뒤, free인 곳은 0, allocated된 곳은 1로 표기
+* 단순하고 효율성이 좋음
+* 단점
+    * disk가 커지면 memory에 올려놓기 부담
 
 ### 2. Linked List
-
+* free space가 다음 free space를 pointing 하는 방식
+* 효율적이지는 않으나, free list traversing이 자주 발생하지 않아 괜찮음
+* 보통 first block이 사용됨
 
 ### 3. Grouping
-
+* linked list 방식의 변형으로, n개의 free block 주소를 첫 번째 free block에 저장, 마지막 block은 또 n개 저장
+* linked list보다 traverse 빠름
 
 ### 4. Counting
-
+* 인접한 block이 같이 allocated 및 freed 된다는 사실 이용해 주소가 아닌 첫 번째 free block과 인접한 free block의 갯수를 보관
 
 ### 5. Space Maps
-
+* Oracle ZFS file system이 사용
+    1. `metaslabs`를 생성해 device에 적당한 size로 나누어 보관
+    1. 각 `metaslabs`에 space maps 보관
+        * space maps: 모든 block의 activity 로그들
+    1. memory에 올라온 metaslabs는 최신화 시킴
+    1. free-space list가 update되어져서 disk에 보관됨
 
 ## Efficiency and Performance
 ### 1. Efficiency
