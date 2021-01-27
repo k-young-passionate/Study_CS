@@ -67,8 +67,27 @@
     * device interrupt들보다는 상대적으로 low priority
 
 ### 3. Direct Memory Access
-### 4. I/O Hardware Summary
+* disk drive와 같이 많은 양을 전송하는 device에게는 `PIO`(`Programmed I/O`)라고 불리는 CPU를 이용하여 한 번에 한 byte씩만을 전송하는 것은 너무 비효율적
+* PIO로 인한 CPU의 사용량을 줄이기 위해 `direct-memory-access` (`DMA`) 고안 
+* 작동 방식
+    1. host가 DMA command block을 memory에 기록
+        * DMA command block: 전송할 source, destination의 pointer, 전송될 bytes 수 보관
+    1. CPU는 DMA command block을 DMA controller에 쓰고 다른 작업을 하러 감
+    1. DMA controller가 memory bus를 단독으로 운영해 data 전송 받음
+    1. disk controller가 DMA controller에게 byte씩 data 전송
+    1. DMA controller는 메모리 주소에 bytes를 기록한 뒤 주소를 늘리고, 전송될 bytes 수를 줄임
+    1. 전송 완료 시, interrupt를 보내 끝났음을 알림
 
+* 자세한 설명은 추후 정리
+
+### 4. I/O Hardware Summary
+* 종류
+    * bus
+    * controller
+    * I/O port와 I/O port가 가진 register
+    * host와 device controller 간의 handshaking
+    * polling loop 혹은 interrupt 방식의 handshaking
+    * 많은 양의 전송을 위한 DMA controller를 통한 offloading
 
 ## Application I/O Interface
 ### 1. Block and Character Devices
