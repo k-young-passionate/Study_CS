@@ -90,11 +90,65 @@
     * 많은 양의 전송을 위한 DMA controller를 통한 offloading
 
 ## Application I/O Interface
+* Device hardware의 구현 차이  
+    * Character-stream vs block: bytes씩 보내기 vs block 단위로 보내기
+    * Sequential or random access: 정해진 순서대로 보내기 vs 잡히는 대로 보내기
+    * Synchronous vs asynchronous: system에 맞춰 예상되는 response time에 전송 vs computer event에 맞춰지지 않는 예측 불가한 response time
+    * Sharable or dedicated: 여러 process/thread에 의해 동시에 접근 가능 vs 한 번에 하나씩
+    * Speed of operation: device 속도
+    * Read-write vs read only vs write only
+* device의 차이가 있어도 OS가 보는 사용법은 비슷
+    * block I/O, character-stream I/O
+    * Memory-mapped file access
+    * Network sockets
+* 대부분 OS는 driver를 통과해 직접 명령할 수 있는 escape(back door)를 가짐
+    * ex) ioctl() (UNIX)
+
 ### 1. Block and Character Devices
+* block-device interface
+    * disk drive 혹은 block 지향 device 접근에 필요한 것들을 가짐
+    * read(), write(), seek()
+* raw I/O
+    * block device를 linear array of blocks로 보고 접근하는 것
+    * file system이 차지하는 용량의 overhead 불필요
+    * OS가 거치지 못하게 함 => direct I/O
+* Memory mapped file access
+    * block-device drivers의 최상단 layer에 위치
+    * read(), write() 제공 대신 main memory의 bytes array를 통해 disk storage 접근
+    * demand-page와 같이 data 전달이 이루어짐
+* character stream interface: keyboard 같은 것 존재
+
 ### 2. Network Devices
+* network i/o는 disk i/o와 확연이 차이나기에 read(), write(), seek() 대신 socket interface 사용
+    * select(): socket들을 관리, 각 socket의 상태 정보 return
+
 ### 3. Clocks and Timers
+* computer의 clock/timer의 역할
+    * 현재 시간 반환
+    * 걸린 시간 반환
+    * 특정 시간에 특정 작업을 trigger 하는 timer 설정
+* programmable interval timer
+    * 걸린 시간 반환 및 trigger timer
+    * 특정 시간이 되면 interrupt 생성
+    * scheduler에 사용
+
 ### 4. Nonblocking and Asynchronous I/O
+* blocking system call
+    * application이 정지
+    * wait queue로 전환되고, system call 끝날 경우 run queue로 돌아옴
+    * hardware들은 보통 asynchronous하게 수행하지만, OS는 이해의 용이성 때문에 blocking system call 사용
+* nonblocking I/O
+    * 일부 user-level process에서 요구: keyboard 입력 등을 받는 경우, video frame을 읽으며 보여주는 경우
+    * 무언가 값을 받기 시작했을 때, return
+* asynchronous I/O
+    * nonblocking I/O의 대체
+    * I/O 완료를 기다리지 않고 call 즉시 return
+
 ### 5. Vectored I/O
+* 하나의 system call로 동시에 여러곳에서 여러 I/O가 가능하게 함
+* context-switching 및 system call overhead 피함
+* scatter-gather 방식: interruption 없이 atomicity 보장
+* vectored I/O를 쓰지 않으면 큰 buffer에 순서대로 담아서 전송하는 비효율적 방식 사용
 
 ## Kernel I/O Subsystem
 ### 1. I/O Scheduling
