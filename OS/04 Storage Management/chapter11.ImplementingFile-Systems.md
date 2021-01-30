@@ -143,35 +143,95 @@
 
 ## Directory Implementation
 ### 1. Linear List
+* 가장 간단한 구현 방법
+* 파일 생성 시, 같은 이름의 파일이 존재하지 않는 것을 확인 후 directory 끝에 entry 추가
+* 파일 삭제 시, 파일 찾아서 space release
+    * 빈 공간 처리 방법
+        * mark unused
+        * free directory entries 관리
+        * last entry를 빈 space로 가져와 length 줄임
+
+* 단점
+    * 작동에 시간 오래 걸림
+    * file 찾는데 linear search를 함: sort 하면 시간 줄지만, 매 번 sort하기 복잡
 
 ### 2. Hash Table
+* 빠른 search 시간과 직관적인 insertion/deletion 가능
 
+* 단점
+    * collision 처리 필요
+    * table size에 따라 hash function이 달라짐
+
+* chained-overflow hash table 사용
+    * 각 hash entry는 linked list로 연결
+    * entry를 추가함으로써 collision 제거
+    * search 속도는 느려지지만 linear search로 전체를 탐색하는 것보다는 훨씬 빠름
 
 ## Allocation Methods
 ### 1. Contiguous Allocation
+* 각 file이 연속된 block을 차지해야 함
+* disk address와 길이로 정의
+* access가 쉬움
+* 단점
+    * 새 파일을 위한 space 찾기 어려움
+    * dynamic storage-allocation problem 발생: first-fit, best-fit, worst-fit 등
+        * external fragmentation 야기
+        * file system을 모두 옮긴 후, free space를 compact 후 file 다시 불러오는 것으로 해결 가능하나 off-line이 되어야하고 그로 인해 down-time 발생
 
 ### 2. Linked Allocation
+* 각 file이 disk block의 linked list 형태로 존재
+* 각 directory는 file의 first와 last block을 pointer로 가리킴
+* file 생성 시, directory의 새 entry를 추가하고, first block에 연결 후, free block들을 찾아 작성 후 연결
+* 단점
+    * sequential access file일 경우에만 효과적임
+    * pointer에 너무 많은 공간 쓰임
+        * cluster라고 불리는 단위로 block을 묶어서 해결 가능하나, internal fragmentation 발생
+    * 안정성에서 문제: 포인터가 사라지면 파일 복구 힘듬
+* `File-Allocation Table` (`FAT`)
+    * MS-DOS에서 사용
+    * Linked Allocation의 적용 사례
 
 ### 3. Indexed Allocation
+* linked allocation에서 pointer들을 index block에 모아놓고 사용
+* ![indexed allocation of disk space](https://media.geeksforgeeks.org/wp-content/uploads/indexedAllocation.jpg)
+* Index block의 다양한 크기에 대한 해결책
+    * Linked scheme: 여러 index blocks를 link
+    * Multilevel index: first-level block은 second-level block을 가리키고, second-level block은 각 file block을 가리킴
+    * Combined scheme
+        * UNIX-based systems에서 사용
+        * 첫 12 pointer는 direct block으로 직접 file 가리킴
+        * 나머지는 indirect block으로 index block 가리킴
+        * double indirect block, triple indirect block은 multilevel index 도입
 
 ### 4. Performance
 
 
 ## Free-Space Management
 ### 1. Bit Vector
-
+* 각 disk block들을 bit map(bit vector)로 표현한 뒤, free인 곳은 0, allocated된 곳은 1로 표기
+* 단순하고 효율성이 좋음
+* 단점
+    * disk가 커지면 memory에 올려놓기 부담
 
 ### 2. Linked List
-
+* free space가 다음 free space를 pointing 하는 방식
+* 효율적이지는 않으나, free list traversing이 자주 발생하지 않아 괜찮음
+* 보통 first block이 사용됨
 
 ### 3. Grouping
-
+* linked list 방식의 변형으로, n개의 free block 주소를 첫 번째 free block에 저장, 마지막 block은 또 n개 저장
+* linked list보다 traverse 빠름
 
 ### 4. Counting
-
+* 인접한 block이 같이 allocated 및 freed 된다는 사실 이용해 주소가 아닌 첫 번째 free block과 인접한 free block의 갯수를 보관
 
 ### 5. Space Maps
-
+* Oracle ZFS file system이 사용
+    1. `metaslabs`를 생성해 device에 적당한 size로 나누어 보관
+    1. 각 `metaslabs`에 space maps 보관
+        * space maps: 모든 block의 activity 로그들
+    1. memory에 올라온 metaslabs는 최신화 시킴
+    1. free-space list가 update되어져서 disk에 보관됨
 
 ## Efficiency and Performance
 ### 1. Efficiency
