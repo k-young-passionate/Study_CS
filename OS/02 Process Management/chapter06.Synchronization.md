@@ -120,64 +120,65 @@ do {
             S++;
         }
         ```
-1. Semaphore Usage
-    * 종류
-        * counting semaphore: 제한되지 않은 범위
-        * binary semaphore: 0 혹은 1, mutex와 같음
-1. Semaphore Implementation
-    * busy waiting을 막기 위한 접근
-        * wait(): S-- 해놓고 접근하지 못하는 상황이면 queue에 추가 후 sleep/block
-        * signal(): S++ 후, deque 한 process wakeup
-1. Deadlocks and Starvation
-    * deadlock: 두 개 이상의 process가 무기한으로 waiting 하는 것
-        * 서로 다른 두 개의 process가 다른 semaphore 획득 시, 일어날 수 있음
-        * 이로 인해 영원히 waiting 상태가 되는 starvation 발생 가능
-1. Priority Inversion
-    * priority가 높은 process가 낮은 process에 자원 처리 순서가 밀리는 상황
-    * priority-inheritance protocol로 해결
-        * 기다리는 가장 높은 priority의 process가 현재 실행 중인 process에게 자신의 priority 상속 및 process의 resource 점유 해제 시 원래의 priority로 복귀
-        * 상속받은 priority로 인해 가장 높은 priority의 process는 resource를 더 낮은 process에 뺏기지 않고 바로 획득 가능
+### 1. Semaphore Usage
+* 종류
+    * counting semaphore: 제한되지 않은 범위
+    * binary semaphore: 0 혹은 1, mutex와 같음
+### 2. Semaphore Implementation
+* busy waiting을 막기 위한 접근
+    * wait(): S-- 해놓고 접근하지 못하는 상황이면 queue에 추가 후 sleep/block
+    * signal(): S++ 후, deque 한 process wakeup
+### 3. Deadlocks and Starvation
+* deadlock: 두 개 이상의 process가 무기한으로 waiting 하는 것
+    * 서로 다른 두 개의 process가 다른 semaphore 획득 시, 일어날 수 있음
+    * 이로 인해 영원히 waiting 상태가 되는 starvation 발생 가능
+### 4. Priority Inversion
+* priority가 높은 process가 낮은 process에 자원 처리 순서가 밀리는 상황
+* priority-inheritance protocol로 해결
+    * 기다리는 가장 높은 priority의 process가 현재 실행 중인 process에게 자신의 priority 상속 및 process의 resource 점유 해제 시 원래의 priority로 복귀
+    * 상속받은 priority로 인해 가장 높은 priority의 process는 resource를 더 낮은 process에 뺏기지 않고 바로 획득 가능
 
 ## Classic Problems of Synchronization
-1. The Bounded-Buffer Problem
-    * buffer가 차면 생산자가 저장할 공간이 없어짐
-    * semaphore를 통해 buffer가 차있을 경우 생산자의 접근을 통제해 해결 가능
-1. Ther Readers-Writers Problem
-    * reader는 읽고 싶어하고 동시에 여럿 접근 가능하나, writer는 하나만 접근 가능
-    * reader-writer lock: read access와 write access 구분
-        * read mode: writer만 locked
-        * write mode: 잡은 writer 빼고 모두 locked
-1. The Dining-Philosophers Problem
-    * 해결법
-        * 최대 n-1명만 동시에 앉을 수 있게 설정
-        * 양쪽 젓가락이 모두 사용가능할 때 집도록 함
-        * asymmetric 방법: 홀수 철학자는 왼쪽-오른쪽, 짝수 철학자는 오른쪽-왼쪽 순으로 집기
+### 1. The Bounded-Buffer Problem
+* buffer가 차면 생산자가 저장할 공간이 없어짐
+* semaphore를 통해 buffer가 차있을 경우 생산자의 접근을 통제해 해결 가능
+### 2. Ther Readers-Writers Problem
+* reader는 읽고 싶어하고 동시에 여럿 접근 가능하나, writer는 하나만 접근 가능
+* reader-writer lock: read access와 write access 구분
+    * read mode: writer만 locked
+    * write mode: 잡은 writer 빼고 모두 locked
+### 3. The Dining-Philosophers Problem
+* 해결법
+    * 최대 n-1명만 동시에 앉을 수 있게 설정
+    * 양쪽 젓가락이 모두 사용가능할 때 집도록 함
+    * asymmetric 방법: 홀수 철학자는 왼쪽-오른쪽, 짝수 철학자는 오른쪽-왼쪽 순으로 집기
 
 ## Monitors
 * semaphore가 쓰기 편리하지만, 잘못 쓰면 찾기 힘든 timing error 등이 발생
 * 이런 오류를 막기 위해 high-level synchronization construct인 monitor type 사용
 
-1. Monitors Usage
-    * Abstract Data Type (ADT): function의 세세한 적용과 독립적인 data를 function들의 집합으로 감쌈
-    * Monitor type은 ADT로 programmer가 정의한 mutex 관련 operation들을 포함
-    * Monitor 안에서는 한 번에 한 process만 active 하게 허용
-    * 좀 더 modeling하기 위해서 condition이라는 construct 사용
-        ```c++
-        condition x;
-        x.wait(); // x.signal() 호출 전 까지 대기
-        ```
-        * signal 보냈을 때의 행동 (P가 signal() 호출 후 Q 실행)
-            1. Signal and wait: P가 Q가 Monitor를 떠나기를 기다리거나 다른 condtion을 기다림
-            1. Signal and continue: Q가 P가 Monitor를 떠나기를 기다리거나 다른 condition 기다림
-1. Dining-Philosophers Solution Using Monitors
-1. Implementing a Monitor Using Semaphores
-1. Resuming Processes within a Monitor
+### 1. Monitors Usage
+* Abstract Data Type (ADT): function의 세세한 적용과 독립적인 data를 function들의 집합으로 감쌈
+* Monitor type은 ADT로 programmer가 정의한 mutex 관련 operation들을 포함
+* Monitor 안에서는 한 번에 한 process만 active 하게 허용
+* 좀 더 modeling하기 위해서 condition이라는 construct 사용
+    ```c++
+    condition x;
+    x.wait(); // x.signal() 호출 전 까지 대기
+    ```
+    * signal 보냈을 때의 행동 (P가 signal() 호출 후 Q 실행)
+        1. Signal and wait: P가 Q가 Monitor를 떠나기를 기다리거나 다른 condtion을 기다림
+        1. Signal and continue: Q가 P가 Monitor를 떠나기를 기다리거나 다른 condition 기다림
+### 2. Dining-Philosophers Solution Using Monitors
+### 3. Implementing a Monitor Using Semaphores
+### 4. Resuming Processes within a Monitor
 
 ## Synchronization Examples
 
+
 ## Alternative Approaches
-1. Transactional Memory
-1. OpenMP
-1. Functional Programming Languages
+### 1. Transactional Memory
+### 2. OpenMP
+### 3. Functional Programming Languages
 
 ## Summary
