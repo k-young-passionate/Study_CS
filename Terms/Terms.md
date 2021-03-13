@@ -28,6 +28,14 @@
 - [Hive](#Hive) 작업 및 [Spark](#Spark) 작업 등을 실행 가능
 
 
+## J
+
+### JPA
+- Java Persistent API
+- RDB의 관리를 표현한 Java API
+- Hibernate 등이 지원
+
+
 ## K
 
 ### Kafka
@@ -41,6 +49,9 @@
 - Map: 흩어진 데이터를 key-value 값으로 묶어줌
 - Reduce: key를 중심으로 필터링/정렬
 
+### Method
+- Class에서 생성된 Instance와 관련된 동작 정의
+- 데이터와 멤버 변수에 대한 접근 권한 가짐
 
 ## O
 
@@ -67,6 +78,11 @@
 - GROUP BY 절과 함께 사용
 - APPROX_COUNT_DISTINCT, AVG, COUNT, GROUPING, MAX, MIN, SUM, 등
 
+## T
+
+### Template engine
+- template 양식에 데이터 입력 자료를 합성하여 결과 문서 출력하는 소프트웨어
+- jsp, thymeleaf 등
 
 ## Z
 
