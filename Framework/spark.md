@@ -60,3 +60,26 @@
 - Web UI 제공: 4040 포트
 - history server: 18080 포트, REST api 이용
 
+
+# Java Spark
+- 참고: [apache spark docs](https://spark.apache.org/docs/latest/api/java/index.html), [apache spark getting started](https://spark.apache.org/docs/latest/sql-getting-started.html), [apache spark guide](https://spark.apache.org/docs/2.1.1/programming-guide.html)
+
+## class, method 명
+### SparkSession
+- SparkSession: Spark programming 시작 점
+- `builder()`: Spark sessions 생성
+- `appName(param)`: cluster에서 돌아갈 application 이름, spark web UI에 표출
+- `master(param)`: cluster의 url, "local" 입력 시 로컬모드, "local[4]"는 4 core 사용
+- `getOrCreate()`: Spark session이 존재하면 가져오고 없으면 생성
+
+### JavaSparkContext
+- JavaSparkContext: load system properties, Java Collection으로 사용할 수 있는 JavaRDDs로 값 반환
+- `parallelize(data, numSlices)`: local Scala collection을 분배하여 RDD 형성 (numSlices만큼 분배)
+
+### JavaRDD
+- JavaRDD: Java에서 사용하는 RDD
+- `foreach(() -> {})`: 각 element 마다 foreach 안의 함수 실행
+- `map(() -> {})`: 각 element 마다 map 안의 함수에서 생성하는 값으로 새 RDD 생성
+- `collect()`: RDD 안에 있는 모든 elements를 포함한 array 반환
+- `glom()`: 각 partition의 elements를 합쳐 하나의 array로 만들고, 각 array들을 모아 하나의 RDD 생성
+
