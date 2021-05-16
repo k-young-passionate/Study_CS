@@ -71,10 +71,17 @@
 - `appName(param)`: cluster에서 돌아갈 application 이름, spark web UI에 표출
 - `master(param)`: cluster의 url, "local" 입력 시 로컬모드, "local[4]"는 4 core 사용
 - `getOrCreate()`: Spark session이 존재하면 가져오고 없으면 생성
+- `createDataset(data, Encoding)`: data(list, RDD, seq 등)를 받아서 encoding 형태에 맞춰 dataset 생성
+- `createDataFrame(data, schema)`: data(list, RDD 등)를 받아서 type 형태에 맞춰 dataframe 생성
 
 ### JavaSparkContext
 - JavaSparkContext: load system properties, Java Collection으로 사용할 수 있는 JavaRDDs로 값 반환
 - `parallelize(data, numSlices)`: local Scala collection을 분배하여 RDD 형성 (numSlices만큼 분배)
+
+### Encoders
+- `Encoder`: JVM object의 type을 Spark SQL 형태로 변환, 다 static 해야 함
+- `Encoders`: `Encoder` 만드는 method 집합
+- `bean(class)`: class type의 Java Bean에 대한 `Encoder` 생성
 
 ### JavaRDD
 - JavaRDD: Java에서 사용하는 RDD
@@ -83,3 +90,30 @@
 - `collect()`: RDD 안에 있는 모든 elements를 포함한 array 반환
 - `glom()`: 각 partition의 elements를 합쳐 하나의 array로 만들고, 각 array들을 모아 하나의 RDD 생성
 
+### JavaPairRDD
+- `JavaPairRDD<T1, T2>`: 값을 pair로 가지고 있는 RDD
+- `collectAsMap()`: map 형태로 return, 모든 데이터가 메모리에 올라가기에 적은 데이터에 사용하는 것을 추천
+- `reduceByKey(() -> {})`: 함수를 통해 같은 key 값들 연산해 merge
+- `foldByKey(() -> {})`: `reduceByKey()`와 같음, `zerovalue`를 넣고 이 값을 기본으로 연산 시작, 항등원을 넣어줌
+- `combineByKey(createCombiner, mergeValue, mergeCombiners)`
+    - `createCombiner`: 각 entry 마다 value에 대한 처리
+    - `mergeValue`: value를 Combiner에 추가
+    - `mergeCombiners`: Combiner끼리 merge
+- `mapValues()`: value 하나씩을 돌아가면서 연산해 출력
+
+### Dataset
+- `printSchema()`: `tree` 형태로 schema 출력
+- `show()`: 20개까지 data 보여줌
+- `filter(condition)`: condition 에 해당하는 값들만 출력
+- `where(condition)`: `filter`와 일치
+- `select(..columns)`: 보여줄 column 선택
+- `foreach`로 탐색시 compile error
+
+### Row
+- `Row`: Dataset의 한 행을 의미하는 interface
+
+### DataFrame
+- `DataFrame`: `Dataset<Row>` 형태
+- `foreach`로 탐색시 list로 return
+
+### Streaming
