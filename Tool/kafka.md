@@ -69,5 +69,65 @@
 - `/consumers`: 마지막으로 읽은 offset 정보 저장
 - `/config`: topic의 상세 설정 정보 확인
 
+
+## Producer
+### 코드
+#### Java
+```Java
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+
+import java.util.Properties;
+
+public class KafkaBookProducer {
+    public static void main(String[] args){
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "peter-kafka001:9092,pter-kafka002:9092,peter-kafka003:9092");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        Producer<String, String> producer = new KafkaProducer<>(props);
+
+        producer.send(new ProducerRecord<String, String>("peter-topic", "Message")); // 확인하지 않고 전송
+        producer.send(new ProducerRecord<String, String>("peter-topic", "key", "value")); // 확인하지 않고 전송
+
+
+        RecordMetadata metadata = producer.send(new ProducerRecord<String, String>("peter-topic", "Message")).get(); // 동기 전송
+
+        producer.send(new ProducerRecord<String, String>("peter-topic", "Message"), new PeterCallback()); // 비동기 전송
+
+        producer.close();
+    }
+}
+
+import org.apache.kafka.clients.producer.Callback;
+
+public PeterCallback implements Callback {
+    public void onCompletion(RecordMetadata metadata, Exception exception) {
+        // 비동기 전송 후 코드 작성
+    }
+}
+```
+
+#### Python3
+```python
+from kafka import KafkaProducer
+
+producer = KafkaProducer(bootstrap_servers='peter-kafka001:9092,pter-kafka002:9092,peter-kafka003:9092')
+producer.send('peter-topic', 'Message')
+```
+
+### 옵션
+- bootstrap.servers: 서버 정보 (`{host name}:{port #}`)
+- acks: 메시지 보내고 받아야 하는 ack 수 (`0`, `1`, `all`, 등)
+    - 많은 acks 수: 메시지 손실 가능성 낮음
+    - 적은 acks 수: 성능 좋음
+- buffer.memory: 서버로 보내기 전 대기할 수 있는 메모리 바이트
+- compression.type: 데이터 압축 시, type (`none`, `gzip`, `snappy`, `lz4`, 등)
+- retries: 전송 실패 데이터 재선송 횟수
+- batch.size: 배치 byte 사이즈
+- linger.ms: 한꺼번에 보내기 위해 추가 메시지 기다리는 시간, batch.size에 도달하면 즉시 전송
+- max.request.size: 최대 메시지 byte 사이즈
+
 ## config 파일
 - `server.properties`
