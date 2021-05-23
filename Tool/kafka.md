@@ -34,11 +34,13 @@
 - 249자 미만 영문, 숫자, '.', '_', '-' 로 구성
 
 ### Parition (파티션)
-- 여러 프로듀서를 대응하기 위한 파티션 필요
+- 여러 프로듀서를 대응하기 위한 Partition 필요
 - 많은 파티션의 단점
     - 파일 핸들러 낭비
     - 장애 복구 시간 증가
 - producer, consumer의 시간당 생산/소비량을 고려해서 결정
+- 같은 Partition내에서는 메시지의 순서 보장
+- Partion이 다른 메시지의 경우 순서가 보장되어지지 않음
 
 ### Offset
 - 파티션마다 메시지가 저장되는 위치
@@ -59,7 +61,7 @@
     - `false`: ISR 밖의 Replica를 Leader로 삼아 빠른 서비스를 제공하는 방법
 
 
-## Kafka with Zookeeper
+## Kafka with [Zookeeper](../Terms/Terms.md#ZooKeeper)
 ### Znode
 - Zookeeper에서 Status 정보들을 key-value 쌍으로 저장
 
@@ -128,6 +130,95 @@ producer.send('peter-topic', 'Message')
 - batch.size: 배치 byte 사이즈
 - linger.ms: 한꺼번에 보내기 위해 추가 메시지 기다리는 시간, batch.size에 도달하면 즉시 전송
 - max.request.size: 최대 메시지 byte 사이즈
+
+
+## Consumer
+### 종류
+- Old Consumer: consumer offset을 [Zookeeper Znode](#Znode)에 저장
+- New Consumer: consumer offset을 Kafka Topic에 저장
+
+### 코드
+#### Java
+```Java
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+
+import java.util.Arrays;
+import java.util.Properties;
+
+public class KafkaBookConsumer {
+    public static void main(String[] args){
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "peter-kafka001:9092,pter-kafka002:9092,peter-kafka003:9092");
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Arrays.asList("peter-topic"));   // topic 구독
+
+        try {
+            while (true) {
+                ConsumerRecords<String, String> records = consumer.poll(100);   // consume
+                for (ConsumerRecords<String, String> record : records)  // 한 번에 온 여러 record 처리
+                    // message 처리
+            }
+        } finally {
+            consumer.close();
+        }
+    }
+}
+```
+
+#### Python3
+```python
+from kafka import KafkaConsumer
+
+consumer = KafkaConsumer('peter-topic',group_id='pter-consumer',bootstrap_servers='peter-kafka001:9092,pter-kafka002:9092,peter-kafka003:9092')
+for message in consumer:
+    # message 처리
+```
+### Consumer Group
+- consumer 각각이 partition 하나씩을 점유
+- 같은 topic에 대해서 같은 `group.id` 공유
+- partition:consumer
+    - `1:1`
+    - `n:1`
+    - `1:n` 은 불가
+
+#### Rebalnace
+- consumer group 내에서 partition 소유권이 이전되는 것
+
+#### Commit & Offset
+- Commit: 각 partition에 대한 offset 위치 업데이트
+    - 자동 Commit
+        - `enable.auto.commit=true`
+        - `auto.commit.interval.ms` 옵션을 통한 주기 조정
+        - 5초마다 `poll()` 호출 시 마지막 offset commit
+    - 수동 Commit
+        - `enable.auto.commit=false`
+        - 자체 db에 저장 후 `commit`해 혹시 모를 장애에 대해 대비
+        - 메시지를 모두 가져와 `consumer.commitSync()` 호출을 통해 수동 commit
+- 특정 Partition 할당
+    - `consumer.assign(Arrays.asList(new TopicPartition(topic, 0), new TopicPartition(topic, 1)));`
+- 특정 Offset 메시지 가져오기
+    - `consumer.seek(new TopicPartition(topic, 0), 2);`
+
+### 옵션
+- `bootstrap.servers`: 서버 정보 (`{host name}:{port #}`)
+- `fetch.min.bytes`: 한번에 가져올 수 있는 최소 사이즈
+- `fetch.max.bytes`: 한번에 가져올 수 있는 최대 사이즈
+- `fetch.max.wait.ms`: `fetch.min.bytes`에 의해 설정된 데이터보다 적은 경우 요청에 응답을 기다리는 최대시간
+- `group.id`: consumer group 식별자
+- `enable.auto.commit`: 주기적으로 offset commit (background)
+- `auto.commit.interval.ms`: offset commit 주기
+- `auto.offset.reset`: current offset이 없는 경우 reset
+    - earliest: 가장 초기의 offset
+    - latest: 가장 마지막의 offset
+    - none: 이전 offset 못 찾을 경우 error
+- `request.timeout.ms`: 요청 응답 대기 최대 시간
+- `session.timeout.ms`: session timeout 시간 (heartbeat 기준)
+- `heartbeat.interval.ms`: heartbeat 보내는 주기, 보통 session timeout의 1/3
+- `max.poll.records`: `poll()`에 대한 최대 레고드 수 조정
+- `max.poll.interval.ms`: consumer가 `heartbeat`만 보내고 메시지를 가져가지 않을 경우, 주기적으로 poll 호출하지 않으면 장애라고 판단 후 다른 consumer에게 파티션 배정
+
 
 ## config 파일
 - `server.properties`

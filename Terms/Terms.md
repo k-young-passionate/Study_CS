@@ -116,6 +116,8 @@
 - web 기반 notebook style의 데이터 분석 툴
 - 코드 작성 - 실행 - 결과 확인 - 코드 수정 가능
 
+### [Znode](../Tool/kafka.md#Znode)
+
 ### ZooKeeper
 - 분산 시스템을 위한 네이밍 레지스트리 제공
 - 정보 공유, 상태 체크, 동기화 처리 프레임워크
