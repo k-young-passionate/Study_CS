@@ -44,7 +44,7 @@
 
 ### Offset
 - 파티션마다 메시지가 저장되는 위치
-- 64bit 정수
+- 64bit 정수
 
 ### Replication
 - Topic을 이루는 각 Partition을 Replication
