@@ -45,7 +45,7 @@
 ## K
 
 ### Kafka
-- pub-sub 모델의 [Message Queue](#Message Queue)
+- pub-sub 모델의 [Message Queue](#Message-queue)
 - publisher와 subscriber 모두 topic만 바라보는 구조
 
 
