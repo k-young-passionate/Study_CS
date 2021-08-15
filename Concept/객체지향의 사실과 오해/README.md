@@ -125,8 +125,8 @@
 - 객체를 기계로 이해
     - 버튼 눌러 상태 조회
     - 버튼 눌러 행동
-    
-    ![](https://lh3.googleusercontent.com/proxy/zVw3nnjyXyCHGdHYPLWLoN0IcBDdLfQOtN9hsEBHynUatIWTMPQ85Hpmv5aV_OCfAK4qATZr_IKKFAPggJAsGDRI7BR-22YAs3lFINM2MHJfCAyJMkAC1Vk81A)
+
+    ![image](https://user-images.githubusercontent.com/11757075/129476359-e721a7b4-5d6a-414e-9fa8-82f4106b183e.png)
 
 ## 행동이 상태를 결정한다
 ### 객체 지향 초보의 실수
