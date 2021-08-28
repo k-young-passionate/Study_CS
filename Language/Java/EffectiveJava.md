@@ -125,17 +125,15 @@ NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8)    // 필수 매개
 - 클라이언트는 이를 통제할 수 없으나, 예외적으로 refelction API인 `AccessibleObject.setAccessible`로 `private` 생성자 호출
 
 1. `public static final`로 선언
-    - 클라이언트가 singleton임이 API에 명백히 드러남
-    - 간결함
-
-    ```java
-    public class Elvis {
-        public static final Elvis INSTANCE = new Elvis();
-        private Elvis() { ... }
-
-        public void leaveTheBuilding() { ... }
-    }
-    ```
+  - 클라이언트가 singleton임이 API에 명백히 드러남
+  - 간결함
+  ```java
+  public class Elvis {
+    public static final Elvis INSTANCE = new Elvis();
+    private Elvis() { ... }
+      public void leaveTheBuilding() { ... }
+  }
+  ```
 
 1. 정적 팩터리 방식
     - 항상 같은 객체의 참조 반환
