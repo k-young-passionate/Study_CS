@@ -400,3 +400,4 @@ public class Room implements AutoCloseable {
 
 - try문 이후 자동으로 `AutoCloseable.close()` 호출
 - catch 문도 사용 가능
+- 같이 읽어볼 것:https://ryan-han.com/post/java/try_with_resources/
