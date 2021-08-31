@@ -16,6 +16,11 @@
 
 ## F
 
+### Failure Atomicity
+
+- 객체의 메서드가 예외를 발생시킨 이후에도 객체를 사용할 수 있어야 함
+- ref: [Stack Overflow](https://stackoverflow.com/questions/29842845/what-is-failure-atomicity-used-by-j-bloch-and-how-its-beneficial-in-terms-of-i)
+
 ### First-Class Object
 
 - 일급 객체

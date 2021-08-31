@@ -125,8 +125,10 @@ NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8)    // 필수 매개
 - 클라이언트는 이를 통제할 수 없으나, 예외적으로 refelction API인 `AccessibleObject.setAccessible`로 `private` 생성자 호출
 
 1. `public static final`로 선언
-  - 클라이언트가 singleton임이 API에 명백히 드러남
-  - 간결함
+
+- 클라이언트가 singleton임이 API에 명백히 드러남
+- 간결함
+
   ```java
   public class Elvis {
     public static final Elvis INSTANCE = new Elvis();
@@ -400,4 +402,133 @@ public class Room implements AutoCloseable {
 
 - try문 이후 자동으로 `AutoCloseable.close()` 호출
 - catch 문도 사용 가능
-- 같이 읽어볼 것:https://ryan-han.com/post/java/try_with_resources/
+- 같이 읽어볼 것:<https://ryan-han.com/post/java/try_with_resources/>
+
+# 클래스와 인터페이스
+
+## 15. 클래스와 멤버의 접근 권한을 최소화하라
+
+## 16. public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라
+
+### public class
+
+- instance field만 사용한 클래스는 데이터 필드에 직접 접근할 수 있으니 캡슐화의 이점을 제공하지 못함
+- 필드를 모두 `private`으로 바꾸고 접근자 추가
+
+```java
+class Point {
+    private double x;
+    private double y;
+
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public double getX() { return x; }
+    public double getY() { return y; }
+
+    public void setX(double x) { this.x = x; }
+    public void setX(double y) { this.y = y; }
+}
+```
+
+#### 패키지 바깥에서 접근할 수 있는 클래스라면 접근자를 제공함으로써 내부 표현방식을 언제든 바꿀 수 있는 유연성 획득
+
+### package-private 클래스, private 중첩 클래스
+
+#### package-private 클래스 혹은 private 중첩 클래스라면 데이터 필드를 노출한다 해도 하등의 문제가 없다
+
+- 클래스가 표현하려는 추상 개념만 올바르게 표현
+- 선언/사용 면에서 훨씬 깔끔
+
+### 예외 사례
+
+- `java.awt.package`의 `Point`, `Dimension` class
+- public 클래스이지만 내부 필드 직접 노출
+- 성능 문제 해결 불가 (item 67)
+
+### 필드 불변
+
+- 직접 노출할 때의 단점이 조금은 줄음
+- 표현 변경 시 API를 변경해야 함
+- 필드 읽을 때, 부수작업 수행 불가
+
+## 17. 변경 가능성을 최소화하라
+
+- 불변 클래스: 인스턴스 내부 값을 수정할 수 없는 클래스
+  - 예시: `String`, `BigInteger`, `BigDecimal`
+
+### 클래스를 불변으로 만들기 위한 규칙
+
+#### 객체의 상태를 변경하는 메서드(변경자)를 제공하지 않는다
+
+#### 클래스를 확장할 수 없도록 한다
+
+- 하위 클래스가 객체의 상태를 변하게 할 수 있음
+
+#### 모든 필드를 final로 선언한다
+
+- 시스템이 강제
+- 새로 생성된 인스턴스를 동기화 없이 다른 스레드로 건네도 문제없이 동작하게끔 보장
+
+#### 모든 필드를 private으로 선언한다
+
+- 클라이언트에서 직접 접근해서 수정하는 일을 막아줌
+- `public final`로 선언해도 되지만, 다음 릴리즈에서 내부 표현을 바꾸지 못함
+
+#### 자신 외에는 내부의 가변 컴포넌트에 접근할 수 없도록 한다
+
+- 클래스에 가변 객체를 참조하는 필드가 하나라도 있다면 클라이언트에서 해당 객체의 참조를 얻을 수 없도록 해야함
+- 생성자, 접근자, readObject 메서드(아이템 88)에서 방어적 복사 수행해야 함
+
+### 예시
+
+- 불변 복소수 클래스
+  - 연산할 경우 새로운 인스턴스 만들어 반환
+  - 메서드 이름으로 동사 `add` 등이 아닌 `plus` 등을 사용하여 객체 값이 변하지 않는다는 것을 강조
+
+### 장점
+
+#### 불변 객체는 단순하다
+
+- 상태가 파괴될 때까지 간직
+- 가변일 경우에는 믿고 사용하기 어려울 수 있음
+
+#### 불변 객체는 근본적으로 스레드 안전하여 따로 동기화할 필요 없다
+
+- 동시에 사용해도 훼손 X
+- 안심하고 공유 가능
+- 최대한 재활용 권장
+
+#### 불변 객체는 자유롭게 공유할 수 있음은 물론, 불변 객체끼리는 내부 데이터를 공유할 수 있다
+
+- 예시: `BigInteger`
+  - 부호는 `int` 변수, 크기는 `int` 배열
+  - 부호 반대인 객체 생성시, 크기 배열은 공유 가능
+
+#### 객체를 만들 때 다른 불변 객체들을 구성요소로 사용하면 이점이 많다
+
+- Map의 key와 Set의 원소로 쓰기에 적합
+- 안에 담긴 값이 변하지 않아 허물어질 일이 없음
+
+#### 불변 객체는 그 자체로 [Failure atomicity(실패 원자성)](../Terms/Terms.md#failure-atomicity)(아이템 76)을 제공한다
+
+- 잠깐이라도 불일치 상태에 빠질 가능성 없음
+
+### 단점
+
+#### 값이 다르면 반드시 독립된 객체로 만들어야한다
+
+
+### 원칙
+
+#### 클래스는 꼭 필요한 경우가 아니라면 불변이어야 한다
+
+#### 불변으로 만들 수 없는 클래스라도 변경할 수 있는 부분은 최소한으로 줄이자
+#### 다른 합당한 이유가 없다면 모든 필드는 private final이어야 한다
+
+#### 생성자는 불변식 설정이 모두 완료된, 초기확가 완벽히 끝난 상태의 객체를 생성해야 한다
+
+
+## 18. 상속보다는 컴포지션을 활용하라
