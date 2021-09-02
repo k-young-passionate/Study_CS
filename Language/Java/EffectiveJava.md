@@ -512,23 +512,80 @@ class Point {
 - Map의 key와 Set의 원소로 쓰기에 적합
 - 안에 담긴 값이 변하지 않아 허물어질 일이 없음
 
-#### 불변 객체는 그 자체로 [Failure atomicity(실패 원자성)](../Terms/Terms.md#failure-atomicity)(아이템 76)을 제공한다
+#### 불변 객체는 그 자체로 [Failure atomicity(실패 원자성)](../../Terms/Terms.md#failure-atomicity)(아이템 76)을 제공한다
 
 - 잠깐이라도 불일치 상태에 빠질 가능성 없음
 
 ### 단점
 
 #### 값이 다르면 반드시 독립된 객체로 만들어야한다
+- 대처방법 1. multi-step operation을 기본 기능으로 제공하는 방법
+  - package-private으로 선언된 [mutable companion class(가변 동반 클래스)](../../Terms/Terms.md#mutable-companion-class) 이용
+  - ex) `BigInteger`
+- 대처방법 2. 복잡한 연산이 예측 불가능 할 때는 companioni class를 public으로 제공
+  - ex) `String` -> `StringBuilder`
 
+### Serialize 할 때
+- 불변 클래스 내부에 가변 객체를 참조하는 필드가 있다면
+- `readObject`, `readResolve`, `ObjectOutputStream.writeUnshared`, `ObjectInputStream.readUnshared` method 중 하나를 제공해야 함
+- 그렇지 않으면 공격자가 이 클래스로부터 가변 인스턴스를 만들어낼 수 있음 (아이템 88)
 
 ### 원칙
 
 #### 클래스는 꼭 필요한 경우가 아니라면 불변이어야 한다
 
+- 특정 상황에서의 잠재적 성능 저하를 제외하고는 장점만 존재
+- 어쩔 수 없다면 [mutable companion class](../../Terms/Terms.md#mutable-companion-class) 이용
+
 #### 불변으로 만들 수 없는 클래스라도 변경할 수 있는 부분은 최소한으로 줄이자
+- 객체가 가질 수 있는 상태의 수를 줄이면, 예측이 쉬워지고, 오류 가능성 적어짐
 #### 다른 합당한 이유가 없다면 모든 필드는 private final이어야 한다
 
 #### 생성자는 불변식 설정이 모두 완료된, 초기확가 완벽히 끝난 상태의 객체를 생성해야 한다
 
 
 ## 18. 상속보다는 컴포지션을 활용하라
+- 상속은 코드를 재사용하는 강력한 수단 but 항상 최선은 아님
+- 다른 패키지의 구체 클래스를 상속하는 일은 위험
+
+#### 메서드 호출과 달리 상속은 캡슐화를 깨뜨린다.
+
+- 상위클래스의 구현에 따라 하위클래스의 동작에 이상이 생길 수 있음
+- 상위클래스의 릴리스에 따른 내부 구현의 변화로 하위클래스에 문제 발생 가능
+  - 상위 클래스의 새롭게 생긴 구현으로 인한 중복된 member변수 조작
+  - 상위 클래스의 새로운 메서드 추가 + 상속 후 구현하지 못하여 허용되지 않은 원소 추가
+  - 하위클래스에서 새롭게 정의한 메서드가 공교롭게 상위 클래스에 추가되는 경우
+
+### 해결책
+
+- 확장하는 대신, 새로운 클래스를 만들고, private 필드로 기존 클래스의 인스턴스를 참조하게 함
+- composition: 기존 클래스가 새로운 클래스의 구성요소로 쓰임
+- forwarding: 새 클래스의 메서드(forwarding method)는 기존 클래스의 대응하는 메서드를 호출
+- 예시: 아래 클래스를 wrapping해서 사용
+
+    ```java
+    public class ForwardingSet<E> implements Set<E> {
+        private final Set<E> s;
+        public ForwardingSet(Set<E> s) { this.s = s; }
+
+        public void clear() { s.clear(); }
+        ...
+    }
+
+    public class InstrumentedSet<E> extends ForwardingSet<E> {  // Wrapper class
+        private int addCount = 0;
+
+        public InstrumentedSet(Set<E> s) {
+            super(s);           
+        }
+
+        @Override public boolean add(E e) {
+            addCount++;
+            return super.add(e);
+        }
+
+        ...
+    }
+    ```
+
+  - wrapper class: [callback framework](../../Terms/Terms.md#callback-framework)와 어울리지 않는다는 것 빼곤 단점 없음

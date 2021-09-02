@@ -14,6 +14,10 @@
 
 - 데이터를 추출, 변환, 요약하여 능동적으로 사용자에게 제공할 수 있는 데이터의 집합체
 
+### Decorator pattern
+
+- 주어진 상황 및 용도에 따라 어떤 객체에 책임을 덧붙이는 패턴
+
 ## F
 
 ### Failure Atomicity
@@ -90,6 +94,40 @@
 
 - Class에서 생성된 Instance와 관련된 동작 정의
 - 데이터와 멤버 변수에 대한 접근 권한 가짐
+
+### Mutable Companion Class
+
+- Immutable class에서 mutable class를 통해 연산해 제공해주는 역할
+
+```java
+public final class Money {
+  private BigDecimal amount;
+
+  public Money(BigDecimal bigDecimal) {
+   this.amount = bigDecimal;
+  }
+
+   public BigDecimal getAmount() {
+    return this.amount;
+   }
+
+ // Notice the exclusively accessibility
+ public Money add(BigDecimal money) {
+  return new Money(this.amount.add(money));
+ }
+
+ private MoneyMutable getMutableVersion() {
+  return new MoneyMutable(this.amount);
+ }
+
+ public Money complexOperation(BigDecimal money) {
+  MoneyMutable mutableMoney = this.getMutableVersion();
+  mutableMoney.add(money);
+  mutableMoney.divide(money);
+  return new Money(mutableMoney.getAmount());
+ }
+}
+```
 
 ## N
 
