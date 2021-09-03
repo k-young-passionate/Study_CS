@@ -589,3 +589,7 @@ class Point {
     ```
 
   - wrapper class: [callback framework](../../Terms/Terms.md#callback-framework)와 어울리지 않는다는 것 빼곤 단점 없음
+
+- 상속은 반드시 하위 클래스가 상위 클래스의 하위 타입일 때만 쓰임
+  - B is a A (`B extends A`)
+  - 상속을 하기 전, 상위 클래스의 API에는 아무런 결함이 없거나 해당 결함이 하위 클래스로 전파되어도 괜찮은지 판단해야 함

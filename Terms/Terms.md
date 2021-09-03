@@ -2,6 +2,10 @@
 
 ## C
 
+### Callback Framework
+
+- 자기 자신의 참조를 다른 객체에 넘겨서 특정 이벤트의 callback에 이용하게 함
+
 ### Covariant Return Type
 
 - 공변 반환 타입
