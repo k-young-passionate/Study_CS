@@ -122,6 +122,15 @@
 - Class에서 생성된 Instance와 관련된 동작 정의
 - 데이터와 멤버 변수에 대한 접근 권한 가짐
 
+### Mixin
+
+- 다른 클래스의 부모클래스가 되지 않으면서 다른 클래스에서 사용할 수 있는 메서드를 포함하는 클래스
+- 장점
+  - 필요한 기능만 상속 가능
+  - 다중 상속 가능
+  - 코드 재사용성: 여러 class의 기능을 하나로 묶음
+- ref: [wiki](https://ko.wikipedia.org/wiki/%EB%AF%B9%EC%8A%A4%EC%9D%B8)
+
 ### Mutable Companion Class
 
 - Immutable class에서 mutable class를 통해 연산해 제공해주는 역할
@@ -245,6 +254,44 @@ my_func("a", "b", name="new name")  # named parameter
 
 - template 양식에 데이터 입력 자료를 합성하여 결과 문서 출력하는 소프트웨어
 - jsp, thymeleaf 등
+
+### Template method pattern
+
+- 알고리즘의 구조를 메소드에 정의하고 (메서드 호출 순서 등), 하위 클래스에서 알고리즘 구조의 변경없이 (호출되는 각 메서드의) 알고리즘을 재정의 하는 패턴
+  ```java
+  public abstract class AbstractClass {
+    
+    protected abstract void hook1();
+    
+    protected abstract void hook2();
+    
+    public void templateMethod() {
+        hook1();
+        hook2();
+    }
+    
+  }
+
+  // 상속
+  public class ConcreteClass extends AbstractClass {
+
+    @Override
+    protected void hook1() {
+        System.out.println("ABSTRACT hook1 implementation");
+    }
+
+    @Override
+    protected void hook2() {
+        System.out.println("ABSTRACT hook2 implementation");
+    }
+
+  }
+
+  // 사용
+  concreteClass.templateMethod();
+  ```
+
+- ref: [YABOONG](https://yaboong.github.io/design-pattern/2018/09/27/template-method-pattern/)
 
 ### Thread safe
 

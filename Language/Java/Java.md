@@ -1,5 +1,30 @@
 # Java 관련 용어 정리
 
+## Interface method
+
+### default method
+
+- 구현하는 class에서 일일히 구현할 필요 없게 interface에서 구현한 method
+    ```java
+    public interface Calculator {
+        default int plus(int i, int j);
+    }
+    ```
+
+### static method
+
+- 간단한 기능을 바로 사용할 수 있는 method
+    ```java
+    public interface Calculator {
+        public static int multiply(int i, int j){
+            return i * j;
+        }
+    }
+    
+    Calculator.multiply(3, 4);
+    ```
+
+
 ## Reference API
 
 - Garbage Collector와 상호작용 할 수 있도록 특별한 reference를 관리해 줌

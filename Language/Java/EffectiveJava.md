@@ -781,15 +781,101 @@ class Point {
 
 ## 20. 추상 클래스보다는 인터페이스를 우선하라
 
-## 21.
+### Java가 제공하는 다중 구현 메커니즘
 
-## 22. 
+- Interface
+  - java 8 부터 [default method](./Java.md#default-method) 제공 가능
+  - 어떤 class를 상속했던, inteface 규약을 지켰으면 같은 타입으로 취급
+- Abstract class
+  - 구현하는 class는 반드시 abstract class의 sub-class 가 되어야 함
 
-## 23.
+### Interface의 장점
 
-## 24.
+1. **기존 클래스에도 손쉽게 새로운 인터페이스를 구현해넣을 수 있음**
+  - 아직 없다면, class 선언에 `implements` 구문만 추가해주면 됨
+2. **[mixin](../../Terms/Terms.md#mixin) 정의에 안성맞춤**
+  - '주된 타입' 외에도 특정 선택적 행위를 제공한다고 선언하는 효과
+  - 추상 클래스는 기존 class에 덧씌울 수 없음
+3. **interface로는 계층구조가 없는 type framework를 만들어낼 수 있음**
+  - 두 개 이상의 interface로 새로운 interface를 만들 수 있음
+  - 예시: singer songwriter
+    ```java
+    public interface SingerSongwriter extends Singer, Songwriter {}
+    ```
+  - 추상 클래스 사용 시, 모든 경우의 수를 고려하여 상속해야 함
+    - n개 class를 이용해 여러 `type` 제작 시, `n^2`개의 class를 생성해야 함
+4. Wrapper class 관용구와 함께 사용하면 **interface는 기능을 향상시키고 안전하고 강력한 수단이 된다.**
+  - 추상 클래스로 정의 시, 해당 type에 기능을 추가하는 방법은 상속 뿐
+5. 구현 방법이 명백한 것이 있다면, [default method](./Java.md#default-method) 이용하면 됨
+  - `@implSpec` javadoc tag를 통해 문서화해야 함
+  - `equals`, `hashCode` 등의 method는 default method로 제공해서는 안 됨 (instance field 가질 수 없고, public이 아닌 static member도 가질 수 없음)
+  - 다른 사람이 만든 interface에는 default method 추가 불가
 
-## 25.
+### [template method pattern](../../Terms/Terms.md#Template-method-pattern)
+- interface와 abstract skeletal implementation class(추상 골격 클래스)를 조합하면 모두의 장점 취할 수 있음
+  - interface로 type 및 default method 정의/제공
+  - abstract skeletal implementation class: 나머지 method 구현
+  - interface 이름이 `A`라면, 골격 구현 클래스 이름은 `AbstractA`라고 지음 (관례)
+- 예시
+  ```java
+  public abstract class AbstractMapEntry<K,V> implements Map.Entry<K,V> {
+    // 이 안에서 interface의 method 구현
+  }
+  ```
+
+### 구현
+
+- 방법 1. [default method](./Java.md#default-method) 사용
+- 방법 2. abstract skeletal implementation class (추상 골격 구현 클래스) 사용
+- 방법 3. Simple implementation(단순 구현) 사용
+  - **Simple implementation(단순 구현)은 골격 구현의 작은 변종**
+  - 상속을 위해 interface를 구현한 것이지만, abstract class가 아님
+  - 동작하는 가장 단순한 구현
+
+## 21. 인터페이스는 구현하는 쪽을 생각해 설계하라
+
+- Java 8 이전에는 interface에 method 추가 시, 구현 class에 우연히 해당 method가 있지 않는 한 compile error 발생
+- Java 8 이후부터 [default method](./Java.md#default-method)를 통해 해결할 수 있음
+  - 매끄럽게 연동된다는 보장은 없음
+  - interface에 추가되는 method는 구현 클래스에 대해 아는 바가 없음
+- lambda 식을 위해 핵심 collection interface들에 [default method](./Java.md#default-method) 추가
+  - **생각할 수 있는 모든 상황에서 불변식을 해치지 않는 디폴트 메서드를 작성하기란 어려운 법이다.**
+- **[default method](./Java.md#default-method)는 (컴파일에 성공하더라도) 기존 구현체에 런타임 오류를 일으킬 수 있다.**
+  - 기존 구현체와 충돌하는 경우가 흔하지 않게 존재
+- 기존 method 제거 혹은 signature를 수정하는 용도가 아님
+
+#### 핵심: [default method](./Java.md#default-method)가 생겼더라도 interface를 설계할 때는 여전히 세심한 주의 필요
+
+- 반드시 테스트 필요
+  - 서로 다른 방식으로 최소한 세 가지는 구현해봐야 함
+  - interface의 instance를 활용하는 클라이언트도 구현해봐야 함
+  - **intreface를 release한 후라도 결함을 수정하는 게 가능한 경우도 있겠지만, 절대 그 가능성에 기대서는 안 된다.**
+
+## 22. 인터페이스는 타입을 정의하는 용도로만 사용하라
+
+### interface란
+- type 역할
+- interface 구현 == 자신의 instance로 무엇을 할 수 있는지 이야기하는 것
+- 지침에 맞지 않는 예: 상수 인터페이스 (static final 필드로만 가득 차있음)
+  - **상수 인터페이스 안티패턴은 인터페이스를 잘못 사용한 예다.**
+  - 상수는 내부 구현인데, interface는 그것을 API로 노출해버리는 것
+  - 사용자에게 혼란
+  - client code가 이 상수에 종속되게 할 수도 있음
+
+### 상수를 공개하고 싶다면?
+- class나 interface 자체에 추가하는 방법
+  - 특정 class나 interface와 강하게 연관되었을 경우
+  - ex) `Integer.MAX_VALUE`
+- Enum Type(열거 타입)으로 만들어 공개하는 방법
+  - 열거 타입으로 나타내기 적합할 경우
+- instance화 할 수 없는 util class에 넣어 공개하는 방법
+
+
+## 23. 태그달린 클래스보다는 클래스 계층구조를 활용하라
+
+## 24. 멤버 클래스는 되도록 static으로 만들라
+
+## 25. 톱레벨 클래스는 한 파일에 하나만 담아라
 
 # 제네릭
 
