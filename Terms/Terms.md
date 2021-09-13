@@ -22,6 +22,20 @@
 
 - 주어진 상황 및 용도에 따라 어떤 객체에 책임을 덧붙이는 패턴
 
+## E
+
+### Equality
+
+#### Logical Equality
+
+- 논리적 동치성
+- instance 변수 값이 일치
+
+#### Object Equality
+
+- 객체 식별성(Object Identity)이 일치
+- 정확히 같은 instance
+
 ## F
 
 ### Failure Atomicity
@@ -86,6 +100,15 @@
 
 - pub-sub 모델의 [Message Queue](#Message-queue)
 - publisher와 subscriber 모두 topic만 바라보는 구조
+
+## L
+
+### Liskov substitution principle
+
+- 리스코프 치환 원칙
+- 어떤 타입에 있어 중요한 속성이면, 하위 타입에서도 중요함
+- 상위 타입의 객체를 하위 타입의 객체로 치환할 수 있어야 함
+- ref: [wiki](https://ko.wikipedia.org/wiki/%EB%A6%AC%EC%8A%A4%EC%BD%94%ED%94%84_%EC%B9%98%ED%99%98_%EC%9B%90%EC%B9%99)
 
 ## M
 
@@ -222,6 +245,22 @@ my_func("a", "b", name="new name")  # named parameter
 
 - template 양식에 데이터 입력 자료를 합성하여 결과 문서 출력하는 소프트웨어
 - jsp, thymeleaf 등
+
+### Thread safe
+
+- 여러 [thread](../OS/CS_TextBook/02%20Process%20Management/chapter04.MultithreadedProgramming.md#Overview)로부터 동시에 접근될 경우, 프로그램 실행에 문제가 없음을 의미
+- 종류
+  - Thread safe: [race condition](../OS/CS_TextBook/02%20Process%20Management/chapter06.Synchronization.md#Background)으로 부터 자유로움
+  - Conditionally safe: 각 thread가 서로 다른 객체에는 자유롭게 접근 가능하고, shared data에 대해서 [race condition](../OS/CS_TextBook/02%20Process%20Management/chapter06.Synchronization.md#Background)으로부터 보호됨
+  - Not thread safe: 동시에 여러 thread가 접근할 수 없음
+- thread safe를 적용 방법
+  - Re-enterancy
+  - Thread-local storage
+  - Immutable objects
+  - Mutual exclusion
+  - Atomic operations
+
+- ref: [곰팡이 먼지연구소](https://gompangs.tistory.com/entry/OS-Thread-Safe%EB%9E%80), [wiki](https://en.wikipedia.org/wiki/Thread_safety)
 
 ## V
 

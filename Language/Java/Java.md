@@ -22,6 +22,31 @@ Integer prime = 1;
 SoftReference<Integer> soft = new SoftReference<Integer>(prime);
 ```
 
+### Variable
+
+#### static variable
+
+- 클래스 변수
+
+#### instance variable
+
+- 인스턴스 변수
+
+#### local variable
+
+- 지역 변수
+
+```java
+class House {
+    static String house; // static variable
+    String name; // instance variable
+
+    void method() {
+        int value = 2; // local variable
+    }
+}
+```
+
 ### Weak Reference
 
 - `null` 상태가 되면 GC 대상
