@@ -489,9 +489,61 @@ public class Room implements AutoCloseable {
 
 ## 13. `clone` 재정의는 주의해서 진행하라
 
+### `Clonable`
 
+- 복제해도 되는 class임을 명시하는 mixin interface
+- method가 없음
+- clone method가 선언된 곳은 Object이고 `protected`로 선언해 외부에서 호출 불가
+- `clone`의 동작 방식 결정: `Clonable` 구현한 instance에서 `clone`을 호출하면 해당 객체의 필드를 하나하나 복사한 객체 반환
+- `Clonable`을 구현하지 않은 class에서는 `CloneNotSupportedException`을 던짐
+- **실무에서 Cloneable을 구현한 class는 clone 메서드를 public으로 제공하며, 사용자는 당연히 복제가 제대로 이뤄지리라 기대한다.**
+- **사실상 생성자와 같은 효과를 낸다. 즉, clone은 원본 객체에 아무런 해를 끼치지 않는 동시에 복제된 객체의 불변식을 보장해야한다.**
+- instance field가 final이면 작동하지 않음
+  - **Cloneable 아키텍처는 '가변 객체를 참조하는 필드는 final로 선언하라'는 일반 용법과 충돌**
+- 가변 상태를 공유하지 않아야 함
+- `public`인 **`clone` method에서는 throws 절을 없애야 함**
+- 상속용 class는 `Cloneable`을 구현해서는 안됨
+
+
+### 복사
+
+```java
+x.clone() != x; // 참
+x.clone().getClass() == x.getClass(); // super.clone() 을 호출한다면 참
+x.clone().equals(x); // 일반적으로 참
+```
+
+#### `Cloneable`을 사용하는 것보다는 복사 생성자와 복사팩터리를 이용하는 것을 추천
+
+- 복사 생성자: 자신과 같은 클래스의 인스턴스를 인수로 받는 생성자
 
 ## 14. `Comparable`을 구현할지 고려하라
+
+### `compareTo`
+
+- `Comparable`의 method
+- `equals`와 다른 점
+  - 동치 + 순서까지 비교 가능 => `sort` 가능
+  - generic 하다
+- 규약
+  ```java
+  sgn(x.compareTo(y)) == -sgn(y.compareTo(x));
+  x.compareTo(y) > 0; y.compareTo(z) > 0; x.compareTo(z) > 0; // 앞 두개가 참이면 참
+  x.compareTo(y) == 0; sgn(x.compareTo(z)) == sgn(y.compareTo(z)); // 앞이 참이면 참
+  (x.comapreTo(y) == 0) == (x.equals(y)); // 필수는 아니지만 지키는 것이 좋음
+  ```
+- 비교자 생성 메서드를 이용하는 방식도 존재
+  ```java
+  private static final Comparator<PhoneNumber> COMPARATOR = 
+                  comparingInt((PhoneNumber pn) -> pn.areaCode)
+                  .thenComparingInt(pn -> pn.prefix)
+                  .thenComparingInt(pn -> pn.lineNum);
+
+  public int compareTo(PhoneNumber pn) {
+    return COMPARATOR.compare(this, pn);
+  }
+  ```
+- primary type field 비교 시, **compareTo 메서드에서 관계연산자 <와 >를 사용하는 방식은 오류를 유발하니, 이제는 추천하지 않는다.** 대신 `compareTo`를 이용하라.
 
 # 클래스와 인터페이스
 
@@ -746,7 +798,7 @@ class Point {
 - 상속이 캡슐화를 해치기 때문에 발생하는 현상
 - `@implSpec` tag를 통해 선택적으로 구현방식 설명
 
-#### 클래스의 내부 동작 과정 중간에 끼어들 수 있는 훅(hook)을 잘 선별하여 protected 메서드 형태로 공개해야 할 수도 있다
+#### 2. 클래스의 내부 동작 과정 중간에 끼어들 수 있는 훅(hook)을 잘 선별하여 protected 메서드 형태로 공개해야 할 수도 있다
 
 - 효율적인 하위 클래스 제작을 위함
 - `protected`로 노출할 메서드는 예측/테스트를 통해 정하는 것이 최선
@@ -873,9 +925,62 @@ class Point {
 
 ## 23. 태그달린 클래스보다는 클래스 계층구조를 활용하라
 
+### 태그달린 클래스
+
+- 두 개 이상의 의미를 표현할 수 있고, 그중 현재 표현하는 의미를 태그값으로 알려주는 class
+- **장황하고, 오류를 내기 쉽고, 비효율적**
+- **태그 달린 클래스는 클래스 계층구조를 어설프게 흉내낸 아류**
+  - subtyping으로 상속하면 됨
+
 ## 24. 멤버 클래스는 되도록 static으로 만들라
 
+### nested class (중첩 클래스)
+
+- 다른 클래스 안에 정의된 클래스
+- 자신을 감싼 class 안에서만 사용
+
+#### 종류: static member class를 제외한 나머지는 내부 class
+
+- static member class
+  - 다른 class 안에 선언
+  - outer class의 private member에도 접근할 수 있음
+  - 다른 정적 member와 똑같은 접근 규칙을 적용받음
+  - outer class와 함께 쓰일 때만 유용한 `public` 도우미 class로 쓰임
+- (non-static) member class
+  - member class의 instance는 암묵적으로 outer class의 instance와 연결 (숨은 외부참조 - 시간/공간 소비)
+  - 정규화된 `this` (`OuterClassName.this`)를 이용해 outer instance의 method 및 참조를 가져올 수 있음
+  - 생성
+    - 보통은 member class의 생성자 호출할 때 만들어짐
+    - 드물게 `OuterClassName.new MemberClass(args)`를 호출해 수동으로 생성
+  - Adapter를 정의할 때 자주 쓰임: 어떤 class의 instance를 감싸 다른 class의 instance처럼 보이게 하는 뷰로 사용
+  - 자신의 collection view를 구현할 때 주로 사용
+- anonymous class
+  - 쓰이는 시점에 선언과 동시에 instance화
+  - 코드의 어디서든 만들 수 있음
+  - non-static한 context에서 사용될 때만 outer class의 instance 참조 가능
+  - lambda 등장 전에 작은 함수 객체나 처리 객체를 만드는 데 주로 사용
+  - 정적 팩터리 메서드 구현할 때 쓰임
+- local class
+  - 가장 드물게 사용
+  - 지역 변수 선언할 수 있는 어디서든 선언 가능
+  - 이름이 있고 반복 사용 가능
+  - non-static context에서만 outer instance 참조 가능
+
+### static member class로 만들어야하는 이유
+
+- **member class에서 바깥 instance에 접근할 일이 없다면 무조건 static을 붙여서 static member class로 만들자.**
+- static이 아니면 숨은 외부참조 발생
+  - 시간/공간 소비
+  - GC가 outer class를 수거하지 못하는 memory leak 발생 가능
+
 ## 25. 톱레벨 클래스는 한 파일에 하나만 담아라
+
+### 여러 top-level class 선언할 경우
+
+- compiler상 제약은 없음
+- 한 class를 여러 가지로 정의할 수 있게 됨
+- compile 순서에 따라 오류 혹은 결과가 달라지는 상황 발생
+- 굳이 사용하고싶다면 static member class를 고려하라
 
 # 제네릭
 
