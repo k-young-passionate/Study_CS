@@ -20,7 +20,7 @@
             return i * j;
         }
     }
-    
+
     Calculator.multiply(3, 4);
     ```
 
@@ -47,6 +47,20 @@ Integer prime = 1;
 SoftReference<Integer> soft = new SoftReference<Integer>(prime);
 ```
 
+### Weak Reference
+
+- `null` 상태가 되면 GC 대상
+- 다음 GC 때 제거
+
+```java
+WeakReference<Integer> soft = new WeakReference<Integer>(prime);
+```
+
+### ref
+
+- <http://www.pawlan.com/monica/articles/refobjs/>
+- <http://blog.breakingthat.com/2018/08/26/java-collection-map-weakhashmap/>
+
 ### Variable
 
 #### static variable
@@ -71,20 +85,6 @@ class House {
     }
 }
 ```
-
-### Weak Reference
-
-- `null` 상태가 되면 GC 대상
-- 다음 GC 때 제거
-
-```java
-WeakReference<Integer> soft = new WeakReference<Integer>(prime);
-```
-
-### ref
-
-- <http://www.pawlan.com/monica/articles/refobjs/>
-- <http://blog.breakingthat.com/2018/08/26/java-collection-map-weakhashmap/>
 
 ## Finalizer
 
