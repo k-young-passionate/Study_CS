@@ -133,7 +133,7 @@ NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8)    // 필수 매개
   public class Elvis {
     public static final Elvis INSTANCE = new Elvis();
     private Elvis() { ... }
-      public void leaveTheBuilding() { ... }
+    public void leaveTheBuilding() { ... }
   }
   ```
 
