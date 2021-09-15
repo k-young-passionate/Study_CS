@@ -126,8 +126,8 @@ NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8)    // 필수 매개
 
 1. `public static final`로 선언
 
-- 클라이언트가 singleton임이 API에 명백히 드러남
-- 간결함
+  - 클라이언트가 singleton임이 API에 명백히 드러남
+  - 간결함
 
   ```java
   public class Elvis {
@@ -532,7 +532,7 @@ x.clone().equals(x); // 일반적으로 참
   x.compareTo(y) == 0; sgn(x.compareTo(z)) == sgn(y.compareTo(z)); // 앞이 참이면 참
   (x.comapreTo(y) == 0) == (x.equals(y)); // 필수는 아니지만 지키는 것이 좋음
   ```
-- 비교자 생성 메서드를 이용하는 방식도 존재
+- 비교자 생성 메서드를 이용하는 방식도 존재: 코드는 깔끔, 약간의 성능 저하
   ```java
   private static final Comparator<PhoneNumber> COMPARATOR = 
                   comparingInt((PhoneNumber pn) -> pn.areaCode)
