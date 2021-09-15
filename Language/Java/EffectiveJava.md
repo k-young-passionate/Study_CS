@@ -121,7 +121,7 @@ NutritionFacts cocaCola = new NutritionFacts.Builder(240, 8)    // 필수 매개
 
 ### singleton 구현 방식
 
-- 공통 방식: 생성자는 private으로 감춰두고, 접근 수단으로 public statc 멤버를 마련해 둠
+- 공통 방식: 생성자는 private으로 감춰두고, 접근 수단으로 public static 멤버를 마련해 둠
 - 클라이언트는 이를 통제할 수 없으나, 예외적으로 refelction API인 `AccessibleObject.setAccessible`로 `private` 생성자 호출
 
 1. `public static final`로 선언
