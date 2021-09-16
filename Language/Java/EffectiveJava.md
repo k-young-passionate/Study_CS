@@ -986,4 +986,70 @@ class Point {
 
 ## 26. raw type은 사용하지 말라
 
+### generic type
+
+#### generic class / generic interface
+
+- class와 interface 선언에 타입 매개변수가 쓰이는 것
+- 위를 모두 통틀어 generic type 이라고 함
+
+#### parameterized type (매개변수화 타입)
+
+- 각각의 generic type이 parameterized type 을 정의
+
+#### raw type
+
+- generic type 정의 시 raw type도 함께 정의 됨
+- raw type: generic type에서 type 매개변수를 사용하지 않을 때를 말함
+  ```java
+  List<E> list;  // generic type
+  List<String> list_string;  // parameterized type
+  List list_raw;  // raw type
+  ```
+- **raw type을 쓰면 generic이 안겨주는 안전성과 표현력을 모두 잃게 된다.**
+- 호환성 때문에 존재
+- `List` 와 `List<Object>`의 차이
+  - 정의하지 않은 것과 모든 타입을 허용한다는 의미의 차이
+  - `List<String>`은 `List`의 하위타입이지만, `List<Object>`의 하위타입이 아님
+  - **`List<Object>`와 같은 매개변수화 타입을 사용할 때와 달리 List 같은 로타입을 사용하면 타입 안전성을 잃게 된다.**
+
+### wildcard type
+
+- 비한정적 wildcard type: `List<?>` - `null` 외에 어떤 원소도 넣을 수 없음
+- 한정적 wildcard type: `List<? extends E>`
+
+### raw type을 써도 되는 경우
+
+1. **[class literal](../../Terms/Terms.md#class-literal)에는 raw type을 써야 함**
+  - 지키지 않는다면 compile error 발생
+1. `instanceof`를 사용할 경우
+  ```java
+  if (o instanceof Set) {
+    Set<?> s = (Set<?>) o;
+    ...
+  }
+  ```
+
 ## 27. 비검사 경고를 제거하라
+
+### 비검사 경고
+
+- 컴파일러가 경고하는 것
+- 예시
+  - 비검사 형변환 경고
+  - 비검사 메서드 호출 경고
+  - 비검사 매개변수화 가변인수 타입 경고
+  - 비검사 변환 경고
+
+#### 할 수 있는 한 모든 비검사 경고를 제거하라
+
+### 대처 방안
+
+#### 경로를 제거할 수는 없지만 type 안전하다고 확신할 수 있다면 `@Suppress Warnings("unchecked")` annotation을 달아 경고를 숨기자
+
+- **하지만 항상 가능한 좁은 범위에 적용하자**
+- 변수에 달아줄 수 있음
+  ```java
+  @SuppressWarnings("unchecked") T[] result = (T[]) Arrays.copyOf(elements, size, a.getClass());
+  ```
+- **사용 시, 그 경고를 무시해도 안전한 이유를 항상 주석으로 남겨야 한다.**

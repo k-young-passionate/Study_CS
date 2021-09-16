@@ -6,6 +6,15 @@
 
 - 자기 자신의 참조를 다른 객체에 넘겨서 특정 이벤트의 callback에 이용하게 함
 
+### Class Literal
+
+- type을 나타내는 것
+```java
+String.class;
+Integer.class;
+```
+- ref: [HomoEfficio](https://homoefficio.github.io/2016/11/30/%ED%81%B4%EB%9E%98%EC%8A%A4-%EB%A6%AC%ED%84%B0%EB%9F%B4-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0-%EC%88%98%ED%8D%BC-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0/)
+
 ### Covariant Return Type
 
 - 공변 반환 타입
