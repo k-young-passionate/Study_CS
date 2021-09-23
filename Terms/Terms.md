@@ -45,6 +45,10 @@ Integer.class;
 - 객체 식별성(Object Identity)이 일치
 - 정확히 같은 instance
 
+### Erasure
+
+- Java에서 generic 지원 이전 코드와의 호환을 위해 원소 타입을 제거하는 것
+
 ## F
 
 ### Failure Atomicity
