@@ -80,6 +80,11 @@ Integer.class;
 - [Hadoop](#Hadoop) 분산 파일 시스템
 - [Hadoop](#Hadoop) 프레임워크를 위해 여러 기계에 대용량 파일을 나눠서 저장
 
+### Heap Pollution
+
+- Java에서 heap에서 가리키고 있는 객체의 타입이 실제와 다른 경우 발생
+- ref: [wikipedia](https://en.wikipedia.org/wiki/Heap_pollution)
+
 ### Hive
 
 - [Hadoop](#Hadoop)에서 동작하는 [Data warehouse](#Data-warehouse)
