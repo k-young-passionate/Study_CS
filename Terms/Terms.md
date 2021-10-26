@@ -63,6 +63,12 @@ Integer.class;
 - 보통 함수에 매개변수로 넘기기, 수정하기, 변수에 대입하기와 같은 연산을 지원할 때 일급 객체라 함
 - ref: [wiki](https://ko.wikipedia.org/wiki/%EC%9D%BC%EA%B8%89_%EA%B0%9D%EC%B2%B4)
 
+### Fluent API
+
+- method chaining에 기반한 지원하는 객체지향 api
+- 소스 코드의 가독성을 산문과 유사하게 만드는 것이 목적
+- ref: [wikipedia](https://ko.wikipedia.org/wiki/%ED%94%8C%EB%A3%A8%EC%96%B8%ED%8A%B8_%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4)
+
 ## H
 
 ### Hadoop
