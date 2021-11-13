@@ -134,6 +134,18 @@ Integer.class;
 - 상위 타입의 객체를 하위 타입의 객체로 치환할 수 있어야 함
 - ref: [wiki](https://ko.wikipedia.org/wiki/%EB%A6%AC%EC%8A%A4%EC%BD%94%ED%94%84_%EC%B9%98%ED%99%98_%EC%9B%90%EC%B9%99)
 
+### Lock Splitting
+
+- 각 기능마다 lock을 따로 관리하는 것
+- ex) read lock, write lock, ...
+- ref: [stackoverflow](https://stackoverflow.com/questions/44123180/lock-splitting-vs-lock-striping)
+
+### Lock Striping
+
+- 각 datastructure 별로 lock을 따로 관리하는 것
+- ex) 각각 lock을 가진 submap으로 map 나누기, ...
+- ref: [stackoverflow](https://stackoverflow.com/questions/44123180/lock-splitting-vs-lock-striping)
+
 ## M
 
 ### MapReduce
@@ -203,6 +215,12 @@ def my_func(a, b, name="default name"):
 my_func("a", "b")  # name 인자를 넣지 않아도 됨
 my_func("a", "b", name="new name")  # named parameter
 ```
+
+### Nonblocking Concurrency Control
+
+- 기다리지 않고 concurrency가 보장 되는 것
+- global하게 concurrency 보장 가능할 경우 lock-free
+- per-thread 에서 보장될 경우 wait-free 
 
 ## O
 
