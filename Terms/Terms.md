@@ -15,6 +15,13 @@ Integer.class;
 ```
 - ref: [HomoEfficio](https://homoefficio.github.io/2016/11/30/%ED%81%B4%EB%9E%98%EC%8A%A4-%EB%A6%AC%ED%84%B0%EB%9F%B4-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0-%EC%88%98%ED%8D%BC-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0/)
 
+### cgroup
+
+- control group의 약자
+- cgroup을 통해 시스템 자원이나 이러한 자원의 조합을 실행 중인 프로세스 간에 할당할 수 있음
+- 시스템 자원 할당, 우선 순위 지정, 거부, 관리, 모니터링
+- ref: [redhat](https://access.redhat.com/documentation/ko-kr/red_hat_enterprise_linux/6/html/resource_management_guide/ch01)
+
 ### Covariant Return Type
 
 - 공변 반환 타입
@@ -155,7 +162,7 @@ Integer.class;
 
 ### Method
 
-- Class에서 생성된 Instance와 관련된 동작 정의
+- Class에서 생성된 Instance와 관련된 동작 정의
 - 데이터와 멤버 변수에 대한 접근 권한 가짐
 
 ### Mixin
@@ -215,6 +222,12 @@ def my_func(a, b, name="default name"):
 my_func("a", "b")  # name 인자를 넣지 않아도 됨
 my_func("a", "b", name="new name")  # named parameter
 ```
+
+### Namespace
+
+- [process](#process)를 실행할 때, system의 resource를 분리해서 사용할 수 있도록 도와주는 기능
+- linux에서는 `init`에 할당된 namespace를 자식들이 공유
+- ref: [44BITS](https://www.44bits.io/ko/keyword/linux-namespace)
 
 ### Nonblocking Concurrency Control
 
