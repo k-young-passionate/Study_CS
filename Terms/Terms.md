@@ -1,10 +1,24 @@
 # Terms
 
+## A
+
+### A record
+
+- domain name으로 Ipv4 주소 반환
+
 ## C
 
 ### Callback Framework
 
 - 자기 자신의 참조를 다른 객체에 넘겨서 특정 이벤트의 callback에 이용하게 함
+
+### cgroup
+
+- control group의 약자
+- cgroup을 통해 시스템 자원이나 이러한 자원의 조합을 실행 중인 프로세스 간에 할당할 수 있음
+- 시스템 자원 할당, 우선 순위 지정, 거부, 관리, 모니터링
+- ref: [redhat](https://access.redhat.com/documentation/ko-kr/red_hat_enterprise_linux/6/html/resource_management_guide/ch01)
+
 
 ### Class Literal
 
@@ -15,12 +29,9 @@ Integer.class;
 ```
 - ref: [HomoEfficio](https://homoefficio.github.io/2016/11/30/%ED%81%B4%EB%9E%98%EC%8A%A4-%EB%A6%AC%ED%84%B0%EB%9F%B4-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0-%EC%88%98%ED%8D%BC-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0/)
 
-### cgroup
+### CNAME record
 
-- control group의 약자
-- cgroup을 통해 시스템 자원이나 이러한 자원의 조합을 실행 중인 프로세스 간에 할당할 수 있음
-- 시스템 자원 할당, 우선 순위 지정, 거부, 관리, 모니터링
-- ref: [redhat](https://access.redhat.com/documentation/ko-kr/red_hat_enterprise_linux/6/html/resource_management_guide/ch01)
+- domain name으로 domain name 반환
 
 ### Covariant Return Type
 
